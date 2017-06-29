@@ -58,6 +58,10 @@
 
   <div class="panel b" ng-show="c.data.cartItems.length > 0">
     <div class="panel-footer">
+      <div class="text-right estimated-completion">
+        <span class="lbl">${Estimated Completion Date Updated}</span>
+        <span class="vl">{{c.data.completion_date}}</span>
+      </div>
       <button ng-disabled="c.checkoutInProgress" name="submit" ng-click="c.triggerCheckout($event)" class="btn btn-success m-l-xs pull-right">
         <span ng-show="!c.checkoutInProgress">${Complete Your Order}</span>
         <span ng-show="c.checkoutInProgress">${Ordering...}</span>
