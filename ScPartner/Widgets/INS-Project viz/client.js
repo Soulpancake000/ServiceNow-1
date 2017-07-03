@@ -22,7 +22,7 @@ function projectVizClient($scope) {
             value: {value: '5', display: '5'}
         },
         {
-            label: {value: '6', display: 'Align & Confirm'},
+            label: {value: '6', display: 'Align and Confirm'},
             value: {value: '6', display: '6'}
         },
 
@@ -61,6 +61,16 @@ function projectVizClient($scope) {
         return {
             'width': length + '%'
         };
-    }
+    };
+
+    c.setFilter = function (state) {
+        c.server.get({
+            state: state,
+            action: "set_filter"
+        }).then(function (response) {
+            c.filter_state = response.data.filter_state;
+            c.data.projects = response.data.projects;
+        });
+    };
 
 }

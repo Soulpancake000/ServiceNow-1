@@ -1,9 +1,23 @@
 (function projectVizServer() {
+    /* Initial Values */
     data.projects = [];
-    var unsorted_projects = [];
+    var unsorted_projects = [],
+        ionStates = ['1', '2', '3'],
+        tspPhases = ['Engage', 'Discover', 'Align and Confirm', 'Promote', 'Realize', 'Closure'];
+    if (input && input.action === "set_filter") {
+        data.filter_state = input.state;
+        if (input.state.value.value >= 4) {
+            tspPhases = [input.state.label.display];
+            ionStates = [];
+        } else {
+            ionStates = [input.state.value.value];
+            tspPhases = [];
+        }
+    }
+
     var ionGr = new GlideRecord('x_snc_ion_nomination');
     ionGr.orderByDesc('opened_at');
-    ionGr.addQuery('state', 'IN', ['1', '2', '3']);
+    ionGr.addQuery('state', 'IN', ionStates);
     ionGr.setLimit(10);
     ionGr.query();
     while (ionGr.next()) {
@@ -14,7 +28,7 @@
 
     var tspGr = new GlideRecord('tsp1_project');
     tspGr.orderByDesc('opened_at');
-    tspGr.addQuery('phase', 'IN', ['Engage', 'Discover', 'Align and Confirm', 'Promote', 'Realize', 'Closure']);
+    tspGr.addQuery('phase', 'IN', tspPhases);
     tspGr.setLimit(10);
     tspGr.query();
     while (tspGr.next()) {

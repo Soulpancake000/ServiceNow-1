@@ -8,7 +8,8 @@
 <div class='container divTable'>
     <div class='row divTableRow divTableHeading'>
         <div class='col-sm-2 divTableHead'>Project</div>
-        <div class='col-sm-1 divTableHead' ng-repeat="state in c.data.states track by $index">{{state.label.display}}
+        <div class='col-sm-1 divTableHead' ng-click="c.setFilter(state)" ng-repeat="state in c.data.states track by $index"
+             ng-class="{active: state.value.value == c.filter_state.value.value}">{{state.label.display}}
         </div>
     </div>
     <div class='row divTableRow'
