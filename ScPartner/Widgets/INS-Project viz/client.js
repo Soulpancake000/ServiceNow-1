@@ -2,41 +2,41 @@ function projectVizClient($scope) {
     var c = this;
     c.data.states = [
         {
-            label: {value: '1', display: 'New'},
-            value: {value: '1', display: '1'}
+            label: {value: '1', display_value: 'New'},
+            value: {value: '1', display_value: '1'}
         },
         {
-            label: {value: '2', display: 'Int. Qual.'},
-            value: {value: '2', display: '2'}
+            label: {value: '2', display_value: 'Int. Qual.'},
+            value: {value: '2', display_value: '2'}
         },
         {
-            label: {value: '3', display: 'Ext. Qual.'},
-            value: {value: '3', display: '3'}
+            label: {value: '3', display_value: 'Ext. Qual.'},
+            value: {value: '3', display_value: '3'}
         },
         {
-            label: {value: '4', display: 'Engage'},
-            value: {value: '4', display: '4'}
+            label: {value: '4', display_value: 'Engage'},
+            value: {value: '4', display_value: '4'}
         },
         {
-            label: {value: '5', display: 'Discover'},
-            value: {value: '5', display: '5'}
+            label: {value: '5', display_value: 'Discover'},
+            value: {value: '5', display_value: '5'}
         },
         {
-            label: {value: '6', display: 'Align and Confirm'},
-            value: {value: '6', display: '6'}
+            label: {value: '6', display_value: 'Align and Confirm'},
+            value: {value: '6', display_value: '6'}
         },
 
         {
-            label: {value: '7', display: 'Promote'},
-            value: {value: '7', display: '7'}
+            label: {value: '7', display_value: 'Promote'},
+            value: {value: '7', display_value: '7'}
         },
         {
-            label: {value: '8', display: 'Realize'},
-            value: {value: '8', display: '8'}
+            label: {value: '8', display_value: 'Realize'},
+            value: {value: '8', display_value: '8'}
         },
         {
-            label: {value: '9', display: 'Closure'},
-            value: {value: '9', display: '9'}
+            label: {value: '9', display_value: 'Closure'},
+            value: {value: '9', display_value: '9'}
         }];
     c.progressBarState = function (row) {
         var project = c.data.projects[row.$parent.$index];

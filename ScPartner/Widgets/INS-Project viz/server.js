@@ -7,7 +7,7 @@
     if (input && input.action === "set_filter") {
         data.filter_state = input.state;
         if (input.state.value.value >= 4) {
-            tspPhases = [input.state.label.display];
+            tspPhases = [input.state.label.display_value];
             ionStates = [];
         } else {
             ionStates = [input.state.value.value];
@@ -21,7 +21,7 @@
     ionGr.setLimit(10);
     ionGr.query();
     while (ionGr.next()) {
-        var ionRec = toObject(ionGr);
+        var ionRec = $sp.getFieldsObject(ionGr, 'state,opened_at,number,short_description,assigned_to');
         unsorted_projects.push(ionRec);
     }
 
@@ -32,25 +32,25 @@
     tspGr.setLimit(10);
     tspGr.query();
     while (tspGr.next()) {
-        var tspRec = toObject(tspGr);
-        switch (tspRec.phase.display) {
+        var tspRec = $sp.getFieldsObject(tspGr, 'state,phase,opened_at,number,short_description,assigned_to');
+        switch (tspRec.phase.display_value) {
             case 'Engage':
-                tspRec.state = {value: '4', display: 'Engage'};
+                tspRec.state = {value: '4', display_value: 'Engage'};
                 break;
             case 'Discover':
-                tspRec.state = {value: '5', display: 'Discover'};
+                tspRec.state = {value: '5', display_value: 'Discover'};
                 break;
             case 'Align and Confirm':
-                tspRec.state = {value: '6', display: 'Align & Confirm'};
+                tspRec.state = {value: '6', display_value: 'Align and Confirm'};
                 break;
             case 'Promote':
-                tspRec.state = {value: '7', display: 'Promote'};
+                tspRec.state = {value: '7', display_value: 'Promote'};
                 break;
             case 'Realize':
-                tspRec.state = {value: '8', display: 'Realize'};
+                tspRec.state = {value: '8', display_value: 'Realize'};
                 break;
             case 'Closure':
-                tspRec.state = {value: '9', display: 'Closure'};
+                tspRec.state = {value: '9', display_value: 'Closure'};
                 break;
         }
         unsorted_projects.push(tspRec);
@@ -58,18 +58,4 @@
     data.projects = unsorted_projects.sort(function (a, b) {
         return a.opened_at.value > b.opened_at.value ? -1 : (a.opened_at.value < b.opened_at.value ? 1 : 0);
     });
-
-    function toObject(recordToPackage) {
-        var packageToSend = {};
-        for (var property in recordToPackage) {
-            try {
-                packageToSend[property] = {
-                    display: recordToPackage[property].getDisplayValue(),
-                    value: recordToPackage.getValue(property)
-                };
-            } catch (err) {
-            }
-        }
-        return packageToSend;
-    }
 })();

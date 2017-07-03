@@ -1,15 +1,15 @@
 <div class='col-sm-11 row'>
     <select ng-model="c.data.filterQuery"
-            ng-options="state as state.label.display for state in c.data.states track by state.label.value">
+            ng-options="state as state.label.display_value for state in c.data.states track by state.label.value">
         <option value="">Filter By State</option>
     </select>
-    <label ng-if="c.data.filterQuery">You'r searching by <strong>{{c.data.filterQuery.label.display}}</strong></label>
+    <label ng-if="c.data.filterQuery">You'r searching by <strong>{{c.data.filterQuery.label.display_value}}</strong></label>
 </div>
 <div class='container divTable'>
     <div class='row divTableRow divTableHeading'>
         <div class='col-sm-2 divTableHead'>Project</div>
         <div class='col-sm-1 divTableHead' ng-click="c.setFilter(state)" ng-repeat="state in c.data.states track by $index"
-             ng-class="{active: state.value.value == c.filter_state.value.value}">{{state.label.display}}
+             ng-class="{active: state.value.value == c.filter_state.value.value}">{{state.label.display_value}}
         </div>
     </div>
     <div class='row divTableRow'
@@ -17,8 +17,8 @@
          ng-class="{divTableRowOdd:$odd, divTableEvenRow:$even}"
          ng-if="!c.data.filterQuery || c.data.filterQuery.label.value == p.state.value">
         <div class='col-sm-2 divTableCell'>
-            <div>{{p.number.display}}</div>
-            <div class="text-muted">{{p.short_description.display}}</div>
+            <div>{{p.opened_at.display_value}}<br>{{p.number.display_value}}</div>
+            <div class="text-muted">{{p.short_description.display_value}}</div>
         </div>
         <div class='divTableCell' ng-class="c.progressBarClass()">
             <div class="checkout-wrap">
