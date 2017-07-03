@@ -14,28 +14,28 @@ function projectVizClient($scope) {
             value: {value: '3', display_value: '3'}
         },
         {
-            label: {value: '4', display_value: 'Engage'},
+            label: {value: 'Kickoff', display_value: 'Engage'},
             value: {value: '4', display_value: '4'}
         },
         {
-            label: {value: '5', display_value: 'Discover'},
+            label: {value: 'Discover', display_value: 'Discover'},
             value: {value: '5', display_value: '5'}
         },
         {
-            label: {value: '6', display_value: 'Align and Confirm'},
+            label: {value: 'Align and Confirm', display_value: 'Align & Confirm'},
             value: {value: '6', display_value: '6'}
         },
 
         {
-            label: {value: '7', display_value: 'Promote'},
+            label: {value: 'Promote', display_value: 'Promote'},
             value: {value: '7', display_value: '7'}
         },
         {
-            label: {value: '8', display_value: 'Realize'},
+            label: {value: 'Realize', display_value: 'Realize'},
             value: {value: '8', display_value: '8'}
         },
         {
-            label: {value: '9', display_value: 'Closure'},
+            label: {value: 'Closure', display_value: 'Closure'},
             value: {value: '9', display_value: '9'}
         }];
     c.progressBarState = function (row) {

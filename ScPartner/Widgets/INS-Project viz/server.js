@@ -3,11 +3,11 @@
     data.projects = [];
     var unsorted_projects = [],
         ionStates = ['1', '2', '3'],
-        tspPhases = ['Engage', 'Discover', 'Align and Confirm', 'Promote', 'Realize', 'Closure'];
+        tspPhases = ['Kickoff', 'Discover', 'Align and Confirm', 'Promote', 'Realize', 'Closure'];
     if (input && input.action === "set_filter") {
         data.filter_state = input.state;
         if (input.state.value.value >= 4) {
-            tspPhases = [input.state.label.display_value];
+            tspPhases = [input.state.label.value];
             ionStates = [];
         } else {
             ionStates = [input.state.value.value];
