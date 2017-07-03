@@ -1,5 +1,6 @@
 (function projectVizServer() {
     data.projects = [];
+    var unsorted_projects = [];
     var ionGr = new GlideRecord('x_snc_ion_nomination');
     ionGr.orderByDesc('opened_at');
     ionGr.addQuery('state', 'IN', ['1', '2', '3']);
@@ -7,7 +8,7 @@
     ionGr.query();
     while (ionGr.next()) {
         var ionRec = toObject(ionGr);
-        data.projects.push(ionRec);
+        unsorted_projects.push(ionRec);
     }
 
 
@@ -38,8 +39,11 @@
                 tspRec.state = {value: '9', display: 'Closure'};
                 break;
         }
-        data.projects.push(tspRec);
+        unsorted_projects.push(tspRec);
     }
+    data.projects = unsorted_projects.sort(function (a, b) {
+        return a.opened_at.value > b.opened_at.value ? -1 : (a.opened_at.value < b.opened_at.value ? 1 : 0);
+    });
 
     function toObject(recordToPackage) {
         var packageToSend = {};
