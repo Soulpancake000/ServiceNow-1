@@ -2,8 +2,6 @@
     var setPaginationToGr = function (gr, delta) {
         var start = (data.pagination.current_page - 1) * parseInt(data.pagination.items_in_pages / 2),
             end = (data.pagination.current_page) * parseInt(data.pagination.items_in_pages / 2);
-        console.log('start ' + start);
-        console.log('end + delta ' + (end + delta));
         gr.chooseWindow(start, end + delta);
         return gr;
     };
@@ -162,9 +160,6 @@
 
     var ion_delta = getPaginationDelta(data.pagination.total_items.ion);
     var tsp_delta = getPaginationDelta(data.pagination.total_items.tsp);
-
-    console.log('ion_delta ' + ion_delta);
-    console.log('tsp_delta ' + tsp_delta);
 
     ionGr = setPaginationToGr(ionGr, tsp_delta);
     tspGr = setPaginationToGr(tspGr, ion_delta);

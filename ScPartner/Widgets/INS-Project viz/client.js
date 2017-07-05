@@ -22,13 +22,10 @@ function projectVizClient(spUtil, $scope, $filter) {
 
     c.progressBarLength = function () {
         var length = parseInt(100 / c.data.states.length);
-        return {
-            'width': length + '%'
-        };
+        return {'width': length + '%'};
     };
 
-    c.updateData = function (action, fn) {
-        fn = fn === undefined ? function () {} : fn;
+    c.updateData = function (action) {
         c.server.get({
             action: action,
             filter_state: c.filter_state,
@@ -37,12 +34,13 @@ function projectVizClient(spUtil, $scope, $filter) {
         }).then(function (response) {
             c.filter_state = response.data.filter_state;
             c.data.projects = response.data.projects;
-            fn(response);
+            c.data.pagination = response.data.pagination;
         });
     };
 
     c.setFilter = function (state) {
         c.filter_state = state;
+        c.data.pagination.current_page = 1;
         c.updateData('get');
     };
 

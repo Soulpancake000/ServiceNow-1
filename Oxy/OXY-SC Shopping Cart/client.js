@@ -4,12 +4,12 @@ function ($scope, spUtil, $location, $timeout) {
     c.deliverTo = "";
     c.additionalDetails = "";
     c.options.cartTemplate = c.options.cartTemplate || 'oxy_large_shopping_cart.html';
-    c.data.completion_date = c.data.completion_date.value ? moment().add(c.data.completion_date.value, c.data.completion_date.time).format('LL') : 'Uknown';
+    c.data.completion_date = c.data.completion_date.value ? moment().add(c.data.completion_date.value, c.data.completion_date.time).format('LL') : 'Unknown';
 
     $scope.$on("$sp.service_catalog.cart.update", function() {
         $scope.server.update().then(function() {
             $scope.$emit("$sp.service_catalog.cart.count", getItemCount());
-            c.data.completion_date = c.data.completion_date.value ? moment().add(c.data.completion_date.value, c.data.completion_date.time).format('LL') : 'Uknown';
+            c.data.completion_date = c.data.completion_date.value ? moment().add(c.data.completion_date.value, c.data.completion_date.time).format('LL') : 'Unknown';
         });
     });
 
