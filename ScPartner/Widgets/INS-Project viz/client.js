@@ -1,4 +1,4 @@
-function projectVizClient($scope) {
+function projectVizClient(spUtil, $scope, $filter) {
     var c = this;
     c.progressBarState = function (row) {
         var project = c.data.projects[row.$parent.$index];
@@ -32,7 +32,8 @@ function projectVizClient($scope) {
         c.server.get({
             action: action,
             filter_state: c.filter_state,
-            sortingField: c.data.sortingField
+            sortingField: c.data.sortingField,
+            pagination: c.data.pagination
         }).then(function (response) {
             c.filter_state = response.data.filter_state;
             c.data.projects = response.data.projects;
@@ -47,5 +48,9 @@ function projectVizClient($scope) {
 
     c.sortProjects = function () {
         c.updateData('get');
-    }
+    };
+
+    c.pageChanged = function () {
+        c.updateData('get');
+    };
 }

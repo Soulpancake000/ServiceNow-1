@@ -14,10 +14,10 @@
             </div>
         </div>
         <div class='row divTableRow'
-             ng-repeat="p in c.data.projects track by $index"
-             ng-class="{divTableRowOdd:$odd, divTableEvenRow:$even}"
+             ng-repeat="p in c.data.projects track by $index" ng-class="{divTableRowOdd:$odd, divTableEvenRow:$even}"
              ng-if="!c.data.filterQuery || c.data.filterQuery.label.value == p.state.value">
             <div class='col-sm-2 divTableCell'>
+                <h1>{{$index}}</h1>
                 <div>{{p.phase.display_value}}</div>
                 <div>{{p.assigned_to.display_value}}</div>
                 <div>{{p.opened_at.display_value}}<br>{{p.number.display_value}}</div>
@@ -32,6 +32,14 @@
                     </ul>
                 </div>
             </div>
+        </div>
+        <div class='row divTableRow'>
+            <ul uib-pagination direction-links="false" boundary-links="true" force-ellipses="true"
+                total-items="c.data.pagination.total_items.total"
+                items-per-page="c.data.pagination.items_in_pages"
+                ng-model="c.data.pagination.current_page"
+                max-size="c.data.pagination.max_size"
+                ng-change="c.pageChanged()"></ul>
         </div>
     </div>
 </div>
