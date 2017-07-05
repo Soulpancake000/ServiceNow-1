@@ -11,7 +11,12 @@
     var getPaginationDelta = function (totalRecords) {
         var itemsInPage = data.pagination.items_in_pages / 2;
         var delta = itemsInPage - (totalRecords - (data.pagination.current_page - 1) * itemsInPage);
-        return delta < itemsInPage && delta > 0 ? delta : 0;
+        if (delta >= itemsInPage) {
+            delta = itemsInPage;
+        } else if (delta < 0) {
+            delta = 0;
+        }
+        return delta;
     };
 
     var mapTspStateFromPhase = function (phase) {
