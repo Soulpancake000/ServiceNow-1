@@ -1,34 +1,36 @@
-<div class='col-sm-11 row'>
-    <select ng-model="c.data.sortingField" ng-change="c.sortProjects()"
-            ng-options="sortingField.label for sortingField in c.data.sortingFields track by sortingField.value">
-        <option value="">Sort By:</option>
-    </select>
-</div>
-<div class='container divTable'>
-    <div class='row divTableRow divTableHeading'>
-        <div class='col-sm-2 divTableHead'>Project</div>
-        <div class='col-sm-1 divTableHead' ng-click="c.setFilter(state)"
-             ng-repeat="state in c.data.states track by $index"
-             ng-class="{active: state.value.value == c.filter_state.value.value}">{{state.label.display_value}}
-        </div>
+<div class='gp_wrapper'>
+    <div class='col-sm-11 row sorting'>
+        <select ng-model="c.data.sortingField" ng-change="c.sortProjects()"
+                ng-options="sortingField.label for sortingField in c.data.sortingFields track by sortingField.value">
+            <option value="">Sort By:</option>
+        </select>
     </div>
-    <div class='row divTableRow'
-         ng-repeat="p in c.data.projects track by $index"
-         ng-class="{divTableRowOdd:$odd, divTableEvenRow:$even}"
-         ng-if="!c.data.filterQuery || c.data.filterQuery.label.value == p.state.value">
-        <div class='col-sm-2 divTableCell'>
-            <div>{{p.phase.display_value}}</div>
-            <div>{{p.assigned_to.display_value}}</div>
-            <div>{{p.opened_at.display_value}}<br>{{p.number.display_value}}</div>
-            <div class="text-muted">{{p.short_description.display_value}}</div>
+    <div class='container divTable'>
+        <div class='row divTableRow divTableHeading'>
+            <div class='col-sm-2 divTableHead'>Project</div>
+            <div class='col-sm-1 divTableHead' ng-click="c.setFilter(state)"
+                 ng-repeat="state in c.data.states track by $index"
+                 ng-class="{active: state.value.value == c.filter_state.value.value}">{{state.label.display_value}}
+            </div>
         </div>
-        <div class='divTableCell' ng-class="c.progressBarClass()">
-            <div class="checkout-wrap">
-                <ul class="checkout-bar">
-                    <li ng-style="c.progressBarLength()"
-                        ng-repeat="state in c.data.states track by $index"
-                        ng-class="c.progressBarState(this)"></li>
-                </ul>
+        <div class='row divTableRow'
+             ng-repeat="p in c.data.projects track by $index"
+             ng-class="{divTableRowOdd:$odd, divTableEvenRow:$even}"
+             ng-if="!c.data.filterQuery || c.data.filterQuery.label.value == p.state.value">
+            <div class='col-sm-2 divTableCell'>
+                <div>{{p.phase.display_value}}</div>
+                <div>{{p.assigned_to.display_value}}</div>
+                <div>{{p.opened_at.display_value}}<br>{{p.number.display_value}}</div>
+                <div class="text-muted">{{p.short_description.display_value}}</div>
+            </div>
+            <div class='divTableCell' ng-class="c.progressBarClass()">
+                <div class="checkout-wrap">
+                    <ul class="checkout-bar">
+                        <li ng-style="c.progressBarLength()"
+                            ng-repeat="state in c.data.states track by $index"
+                            ng-class="c.progressBarState(this)"></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>

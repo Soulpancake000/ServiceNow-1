@@ -24,7 +24,7 @@
     ];
     var unsorted_projects = [], tspSortBy = 'opened_at', ionSortBy = 'opened_at', ionStates = ['1', '2', '3'],
         tspPhases = ['Kickoff', 'Discover', 'Align and Confirm', 'Promote', 'Realize', 'Closure'];
-    console.log(input);
+
     if (input) {
         if (input.action === 'get') {
             if (input.filter_state) {
