@@ -17,10 +17,7 @@
              ng-repeat="p in c.data.projects track by $index" ng-class="{divTableRowOdd:$odd, divTableEvenRow:$even}"
              ng-if="!c.data.filterQuery || c.data.filterQuery.label.value == p.state.value">
             <div class='col-sm-2 divTableCell'>
-                <h1>{{$index}}</h1>
-                <div>{{p.phase.display_value}}</div>
-                <div>{{p.assigned_to.display_value}}</div>
-                <div>{{p.opened_at.display_value}}<br>{{p.number.display_value}}</div>
+                <div>{{p.number.display_value}}</div>
                 <div class="text-muted">{{p.short_description.display_value}}</div>
             </div>
             <div class='divTableCell' ng-class="c.progressBarClass()">
