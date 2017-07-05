@@ -1,43 +1,5 @@
 function projectVizClient($scope) {
     var c = this;
-    c.data.states = [
-        {
-            label: {value: '1', display_value: 'New'},
-            value: {value: '1', display_value: '1'}
-        },
-        {
-            label: {value: '2', display_value: 'Int. Qual.'},
-            value: {value: '2', display_value: '2'}
-        },
-        {
-            label: {value: '3', display_value: 'Ext. Qual.'},
-            value: {value: '3', display_value: '3'}
-        },
-        {
-            label: {value: 'Kickoff', display_value: 'Engage'},
-            value: {value: '4', display_value: '4'}
-        },
-        {
-            label: {value: 'Discover', display_value: 'Discover'},
-            value: {value: '5', display_value: '5'}
-        },
-        {
-            label: {value: 'Align and Confirm', display_value: 'Align & Confirm'},
-            value: {value: '6', display_value: '6'}
-        },
-
-        {
-            label: {value: 'Promote', display_value: 'Promote'},
-            value: {value: '7', display_value: '7'}
-        },
-        {
-            label: {value: 'Realize', display_value: 'Realize'},
-            value: {value: '8', display_value: '8'}
-        },
-        {
-            label: {value: 'Closure', display_value: 'Closure'},
-            value: {value: '9', display_value: '9'}
-        }];
     c.progressBarState = function (row) {
         var project = c.data.projects[row.$parent.$index];
         var cl = {
@@ -51,11 +13,13 @@ function projectVizClient($scope) {
         cl['fa-check'] = cl.active;
         return cl;
     };
+
     c.progressBarClass = function () {
         var rtn = {};
         rtn['col-sm-' + c.data.states.length] = true;
         return rtn;
     };
+
     c.progressBarLength = function () {
         var length = parseInt(100 / c.data.states.length);
         return {
@@ -63,14 +27,25 @@ function projectVizClient($scope) {
         };
     };
 
-    c.setFilter = function (state) {
+    c.updateData = function (action, fn) {
+        fn = fn === undefined ? function () {} : fn;
         c.server.get({
-            state: state,
-            action: "set_filter"
+            action: action,
+            filter_state: c.filter_state,
+            sortingField: c.data.sortingField
         }).then(function (response) {
             c.filter_state = response.data.filter_state;
             c.data.projects = response.data.projects;
+            fn(response);
         });
     };
 
+    c.setFilter = function (state) {
+        c.filter_state = state;
+        c.updateData('get');
+    };
+
+    c.sortProjects = function () {
+        c.updateData('get');
+    }
 }

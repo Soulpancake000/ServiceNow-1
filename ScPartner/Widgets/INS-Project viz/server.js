@@ -1,22 +1,51 @@
 (function projectVizServer() {
     /* Initial Values */
     data.projects = [];
-    var unsorted_projects = [],
-        ionStates = ['1', '2', '3'],
+    data.states = [
+        {label: {value: '1', display_value: 'New'}, value: {value: '1', display_value: '1'}},
+        {label: {value: '2', display_value: 'Int. Qual.'}, value: {value: '2', display_value: '2'}},
+        {label: {value: '3', display_value: 'Ext. Qual.'}, value: {value: '3', display_value: '3'}},
+        {label: {value: 'Kickoff', display_value: 'Engage'}, value: {value: '4', display_value: '4'}},
+        {label: {value: 'Discover', display_value: 'Discover'}, value: {value: '5', display_value: '5'}},
+        {
+            label: {value: 'Align and Confirm', display_value: 'Align & Confirm'},
+            value: {value: '6', display_value: '6'}
+        },
+        {label: {value: 'Promote', display_value: 'Promote'}, value: {value: '7', display_value: '7'}},
+        {label: {value: 'Realize', display_value: 'Realize'}, value: {value: '8', display_value: '8'}},
+        {label: {value: 'Closure', display_value: 'Closure'}, value: {value: '9', display_value: '9'}}
+    ];
+    data.sortingFields = [
+        {value: 'state', label: 'State'},
+        {value: 'opened_at', label: 'Opened At'},
+        {value: 'number', label: 'Number'},
+        {value: 'short_description', label: 'Short Description'},
+        {value: 'assigned_to', label: 'Assigned To'}
+    ];
+    var unsorted_projects = [], tspSortBy = 'opened_at', ionSortBy = 'opened_at', ionStates = ['1', '2', '3'],
         tspPhases = ['Kickoff', 'Discover', 'Align and Confirm', 'Promote', 'Realize', 'Closure'];
-    if (input && input.action === "set_filter") {
-        data.filter_state = input.state;
-        if (input.state.value.value >= 4) {
-            tspPhases = [input.state.label.value];
-            ionStates = [];
-        } else {
-            ionStates = [input.state.value.value];
-            tspPhases = [];
+    console.log(input);
+    if (input) {
+        if (input.action === 'get') {
+            if (input.filter_state) {
+                data.filter_state = input.filter_state;
+                if (data.filter_state.value.value >= 4) {
+                    tspPhases = [data.filter_state.label.value];
+                    ionStates = [];
+                } else {
+                    ionStates = [data.filter_state.value.value];
+                    tspPhases = [];
+                }
+            }
+            if (input.sortingField) {
+                tspSortBy = input.sortingField.value === 'state' ? 'phase' : 'state';
+                ionSortBy = input.sortingField.value;
+            }
         }
     }
 
     var ionGr = new GlideRecord('x_snc_ion_nomination');
-    ionGr.orderByDesc('opened_at');
+    ionGr.orderByDesc(ionSortBy);
     ionGr.addQuery('state', 'IN', ionStates);
     ionGr.setLimit(10);
     ionGr.query();
@@ -27,7 +56,7 @@
 
 
     var tspGr = new GlideRecord('tsp1_project');
-    tspGr.orderByDesc('opened_at');
+    tspGr.orderByDesc(tspSortBy);
     tspGr.addQuery('phase', 'IN', tspPhases);
     tspGr.setLimit(10);
     tspGr.query();
@@ -56,6 +85,8 @@
         unsorted_projects.push(tspRec);
     }
     data.projects = unsorted_projects.sort(function (a, b) {
-        return a.opened_at.value > b.opened_at.value ? -1 : (a.opened_at.value < b.opened_at.value ? 1 : 0);
+        var a_value = a[ionSortBy].value === undefined ? a[tspSortBy].value : a[ionSortBy].value;
+        var b_value = b[ionSortBy].value === undefined ? b[tspSortBy].value : b[ionSortBy].value;
+        return a_value > b_value ? -1 : (a_value < b_value ? 1 : 0);
     });
 })();
