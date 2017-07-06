@@ -2,8 +2,8 @@
     <div class="row sorting">
         <label>Sort By:</label>
         <select ng-model="c.data.sortingField" ng-change="c.sortProjects()" ng-options="sortingField.label for sortingField in c.data.sortingFields track by sortingField.value">
-            <option value="">Created</option>
         </select>
+        <!--<button class="btn" ng-model="c.data.sortDirection" ng-click="(c.data.sortDirection=c.data.sortDirection==='Desc'?'Asc':'Desc') && c.updateData('get')">{{data.sortDirection}}</button>-->
     </div>
     <span class="glyphicons glyphicons-delete"></span>
     <div class="container">
@@ -18,6 +18,7 @@
             <div class="row divTableRow" ng-if="!c.updatingData" ng-repeat="project in c.data.projects track by $index" ng-class="{divTableRowOdd:$odd, divTableEvenRow:$even}">
                 <a href="inspire?id=form&table={{project.table}}&sys_id={{project.sys_id.display_value}}">
                     <div class="col-sm-2 divTableCell">
+                        <!--<div>{{project[c.data.sortingField.value].display_value}}</div>-->
                         <div>{{project.number.display_value}}</div>
                         <div class="text-muted">{{project.short_description.display_value}}</div>
                     </div>

@@ -31,7 +31,8 @@ function projectVizClient(spUtil, $scope, $filter) {
             action: action,
             filter_state: c.filter_state,
             sortingField: c.data.sortingField,
-            pagination: c.data.pagination
+            pagination: c.data.pagination,
+            sortDirection: c.data.sortDirection
         }).then(function (response) {
             c.filter_state = response.data.filter_state;
             c.data.projects = response.data.projects;

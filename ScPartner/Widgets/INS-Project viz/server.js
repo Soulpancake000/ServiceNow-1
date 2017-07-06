@@ -22,8 +22,7 @@
         }, {
             label: {value: 'Align and Confirm', display_value: 'Align & Confirm'},
             value: {value: '6', display_value: '6'}
-        },
-        {
+        }, {
             label: {value: 'Promote', display_value: 'Promote'},
             value: {value: '7', display_value: '7'}
         }, {
@@ -36,39 +35,24 @@
     ];
     data.sortingFields = [
         {
+            value: 'opened_at',
+            label: 'Created'
+        }, {
             value: 'state',
             label: 'State'
-        },
-        {
-            value: 'opened_at',
-            label: 'Opened At'
-        },
-        {
+        }, {
             value: 'number',
             label: 'Number'
-        },
-        {
+        }, {
             value: 'short_description',
             label: 'Short Description'
-        },
-        {
+        }, {
             value: 'assigned_to',
-            label: 'Assigned To'
+            label: 'Owner'
         }
     ];
-    var unsorted_projects = [],
-        tsp_sort_by = 'opened_at',
-        ion_sort_by = 'opened_at',
-        ion_states = ['1', '2', '3'],
-        tsp_phases = [
-            'Kickoff',
-            'Discover',
-            'Align and Confirm',
-            'Promote',
-            'Realize',
-            'Closure'
-        ];
-
+    data.sortDirection = 'Desc';
+    data.sortingField = data.sortingFields[0];
     data.pagination = {
         items_in_pages: 20,
         current_page: 1,
@@ -79,6 +63,9 @@
             total: 0
         }
     };
+    var unsorted_projects = [],
+        ion_states = ['1', '2', '3'],
+        tsp_phases = ['Kickoff', 'Discover', 'Align and Confirm', 'Promote', 'Realize', 'Closure'];
 
     /** Service Dispatch **/
     if (input) {
@@ -89,25 +76,24 @@
                     tsp_phases = [data.filter_state.label.value];
                     ion_states = [];
                 } else {
-                    ion_states = [data.filter_state.value.value];
                     tsp_phases = [];
+                    ion_states = [data.filter_state.value.value];
                 }
             }
-            if (input.sortingField) {
-                tsp_sort_by = input.sortingField.value === 'state' ? 'phase' : 'state';
-                ion_sort_by = input.sortingField.value;
-            }
-            if (input.pagination) {
-                data.pagination = input.pagination;
-            }
+            if (input.sortingField) data.sortingField = input.sortingField;
+            if (input.sortDirection) data.sortDirection = input.sortDirection;
+            if (input.pagination) data.pagination = input.pagination;
+
         }
     }
 
     var ionGr = new GlideRecord('x_snc_ion_nomination');
+    ionGr = applySortDirection(ionGr, data.sortingField.value);
     ionGr.addQuery('state', 'IN', ion_states);
     ionGr.query();
 
     var tspGr = new GlideRecord('tsp1_project');
+    tspGr = applySortDirection(tspGr, data.sortingField.value === 'state' ? 'phase' : data.sortingField.value);
     tspGr.addQuery('phase', 'IN', tsp_phases);
     tspGr.query();
 
@@ -115,11 +101,8 @@
     data.pagination.total_items.tsp = tspGr.getRowCount();
     data.pagination.total_items.total = data.pagination.total_items.tsp + data.pagination.total_items.ion;
 
-    var ion_delta = getPaginationDelta(data.pagination.total_items.ion);
-    var tsp_delta = getPaginationDelta(data.pagination.total_items.tsp);
-
-    ionGr = setPaginationToGr(ionGr, tsp_delta);
-    tspGr = setPaginationToGr(tspGr, ion_delta);
+    ionGr = setPaginationToGr(ionGr, data.pagination.total_items.ion);
+    tspGr = setPaginationToGr(tspGr, data.pagination.total_items.tsp);
 
     ionGr.query();
     while (ionGr.next()) {
@@ -137,12 +120,13 @@
     }
 
     data.projects = unsorted_projects.sort(function (a, b) {
-        var a_value = a[ion_sort_by].value === undefined ? a[tsp_sort_by].value : a[ion_sort_by].value;
-        var b_value = b[ion_sort_by].value === undefined ? b[tsp_sort_by].value : b[ion_sort_by].value;
+        var a_value = a[data.sortingField.value].value;
+        var b_value = b[data.sortingField.value].value;
         return a_value > b_value ? -1 : (a_value < b_value ? 1 : 0);
     });
 
-    function setPaginationToGr(gr, delta) {
+    function setPaginationToGr(gr, totalRecords) {
+        var delta = getPaginationDelta(totalRecords);
         var start = (data.pagination.current_page - 1) * parseInt(data.pagination.items_in_pages / 2),
             end = (data.pagination.current_page) * parseInt(data.pagination.items_in_pages / 2);
         gr.chooseWindow(start, end + delta);
@@ -183,5 +167,14 @@
                 break;
         }
         return state;
+    }
+
+    function applySortDirection(gr, sortBy) {
+        console.log('sorting by ' + sortBy);
+        if (data.sortDirection === 'Asc')
+            gr.orderBy(sortBy);
+        else
+            gr.orderByDesc(sortBy);
+        return gr;
     }
 })();
