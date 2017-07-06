@@ -1,5 +1,5 @@
 <div class="gp_wrapper">
-    <div class="col-sm-11 row sorting">
+    <div class="row sorting">
         <label>Sort By:</label>
         <select ng-model="c.data.sortingField" ng-change="c.sortProjects()" ng-options="sortingField.label for sortingField in c.data.sortingFields track by sortingField.value">
             <option value="">Created</option>
@@ -48,7 +48,7 @@
                 ng-model="c.data.pagination.current_page" max-size="c.data.pagination.max_size" ng-change="c.pageChanged()"></ul>
         </div>
         <div ng-show="c.updatingData" class="row divTableRow">
-            <span class="fa fa-spinner fa-2" style="font-size: 2em;"></span>Loading
+            <span class="fa fa-spinner fa-2 spinner"></span>Loading
         </div>
     </div>
 </div>
