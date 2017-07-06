@@ -57,8 +57,14 @@ function projectVizClient(spUtil, $scope, $filter) {
     c.getProjectAdvancePercentage = function (project) {
         return parseInt(project.state.value / c.data.states.length * 100);
     };
-
     c.showProgressBar = function () {
         return window.innerWidth <= 800;
+    };
+    c.windowWidthStatus = c.showProgressBar();
+    window.onresize = function (event) {
+        if (c.showProgressBar() !== c.windowWidthStatus) {
+            c.windowWidthStatus = c.showProgressBar();
+            $scope.$apply();
+        }
     };
 }
