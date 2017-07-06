@@ -1,47 +1,4 @@
 (function projectVizServer() {
-    var setPaginationToGr = function (gr, delta) {
-        var start = (data.pagination.current_page - 1) * parseInt(data.pagination.items_in_pages / 2),
-            end = (data.pagination.current_page) * parseInt(data.pagination.items_in_pages / 2);
-        gr.chooseWindow(start, end + delta);
-        return gr;
-    };
-
-    var getPaginationDelta = function (totalRecords) {
-        var itemsInPage = data.pagination.items_in_pages / 2;
-        var delta = itemsInPage - (totalRecords - (data.pagination.current_page - 1) * itemsInPage);
-        if (delta >= itemsInPage) {
-            delta = itemsInPage;
-        } else if (delta < 0) {
-            delta = 0;
-        }
-        return delta;
-    };
-
-    var mapTspStateFromPhase = function (phase) {
-        var state = {};
-        switch (phase.display_value) {
-            case 'Engage':
-                state = {value: '4', display_value: 'Engage'};
-                break;
-            case 'Discover':
-                state = {value: '5', display_value: 'Discover'};
-                break;
-            case 'Align and Confirm':
-                state = {value: '6', display_value: 'Align and Confirm'};
-                break;
-            case 'Promote':
-                state = {value: '7', display_value: 'Promote'};
-                break;
-            case 'Realize':
-                state = {value: '8', display_value: 'Realize'};
-                break;
-            case 'Closure':
-                state = {value: '9', display_value: 'Closure'};
-                break;
-        }
-        return state;
-    };
-
     /**
      *  Initial Values
      */
@@ -166,14 +123,16 @@
 
     ionGr.query();
     while (ionGr.next()) {
-        var ionRec = $sp.getFieldsObject(ionGr, 'state,opened_at,number,short_description,assigned_to');
+        var ionRec = $sp.getFieldsObject(ionGr, 'state,opened_at,number,short_description,assigned_to,sys_id');
+        ionRec.table = 'x_snc_ion_nomination';
         unsorted_projects.push(ionRec);
     }
 
     tspGr.query();
     while (tspGr.next()) {
-        var tspRec = $sp.getFieldsObject(tspGr, 'state,phase,opened_at,number,short_description,assigned_to');
+        var tspRec = $sp.getFieldsObject(tspGr, 'state,phase,opened_at,number,short_description,assigned_to,sys_id');
         tspRec.state = mapTspStateFromPhase(tspRec.phase);
+        tspRec.table = 'tsp1_project';
         unsorted_projects.push(tspRec);
     }
 
@@ -182,4 +141,47 @@
         var b_value = b[ion_sort_by].value === undefined ? b[tsp_sort_by].value : b[ion_sort_by].value;
         return a_value > b_value ? -1 : (a_value < b_value ? 1 : 0);
     });
+
+    function setPaginationToGr(gr, delta) {
+        var start = (data.pagination.current_page - 1) * parseInt(data.pagination.items_in_pages / 2),
+            end = (data.pagination.current_page) * parseInt(data.pagination.items_in_pages / 2);
+        gr.chooseWindow(start, end + delta);
+        return gr;
+    }
+
+    function getPaginationDelta(totalRecords) {
+        var itemsInPage = data.pagination.items_in_pages / 2;
+        var delta = itemsInPage - (totalRecords - (data.pagination.current_page - 1) * itemsInPage);
+        if (delta >= itemsInPage) {
+            delta = itemsInPage;
+        } else if (delta < 0) {
+            delta = 0;
+        }
+        return delta;
+    }
+
+    function mapTspStateFromPhase(phase) {
+        var state = {};
+        switch (phase.display_value) {
+            case 'Engage':
+                state = {value: '4', display_value: 'Engage'};
+                break;
+            case 'Discover':
+                state = {value: '5', display_value: 'Discover'};
+                break;
+            case 'Align and Confirm':
+                state = {value: '6', display_value: 'Align and Confirm'};
+                break;
+            case 'Promote':
+                state = {value: '7', display_value: 'Promote'};
+                break;
+            case 'Realize':
+                state = {value: '8', display_value: 'Realize'};
+                break;
+            case 'Closure':
+                state = {value: '9', display_value: 'Closure'};
+                break;
+        }
+        return state;
+    }
 })();

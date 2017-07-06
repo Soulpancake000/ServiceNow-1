@@ -16,10 +16,12 @@
                 </div>
             </div>
             <div class="row divTableRow" ng-if="!c.updatingData" ng-repeat="project in c.data.projects track by $index" ng-class="{divTableRowOdd:$odd, divTableEvenRow:$even}">
-                <div class="col-sm-2 divTableCell">
-                    <div>{{project.number.display_value}}</div>
-                    <div class="text-muted">{{project.short_description.display_value}}</div>
-                </div>
+                <a href="inspire?id=form&table={{project.table}}&sys_id={{project.sys_id.display_value}}">
+                    <div class="col-sm-2 divTableCell">
+                        <div>{{project.number.display_value}}</div>
+                        <div class="text-muted">{{project.short_description.display_value}}</div>
+                    </div>
+                </a>
                 <div class="divTableCell" ng-class="c.progressBarClass()">
                     <div class="checkout-wrap">
                         <ul class="checkout-bar">
@@ -32,10 +34,12 @@
         <!--MOBILE-->
         <div class="mobile-progressbar divTable" ng-if="c.showProgressBar()">
             <div class="row divTableRow" ng-if="!c.updatingData" ng-repeat="project in c.data.projects track by $index" ng-class="{divTableRowOdd:$odd, divTableEvenRow:$even}">
-                <div class="row col-sm-2 divTableCell info">
-                    <div class="col-sm-1"><strong>{{project.number.display_value}}</strong></div>
-                    <div class="col-sm-1">{{project.short_description.display_value}}</div>
-                </div>
+                <a href="inspire?id=form&table={{project.table}}&sys_id={{project.sys_id.display_value}}">
+                    <div class="row col-sm-2 divTableCell info">
+                        <div class="col-sm-1"><strong>{{project.number.display_value}}</strong></div>
+                        <div class="col-sm-1">{{project.short_description.display_value}}</div>
+                    </div>
+                </a>
                 <div class="col-sm-2 divTableCell">
                     <uib-progressbar animate="false" value="c.getProjectAdvancePercentage(project)" type="success">
                         <b>{{project.state.display_value}}</b>
