@@ -1,47 +1,43 @@
 <div class="gp_wrapper">
     <div class="col-sm-11 row sorting">
         <label>Sort By:</label>
-        <select ng-model="c.data.sortingField" ng-change="c.sortProjects()"
-                ng-options="sortingField.label for sortingField in c.data.sortingFields track by sortingField.value">
+        <select ng-model="c.data.sortingField" ng-change="c.sortProjects()" ng-options="sortingField.label for sortingField in c.data.sortingFields track by sortingField.value">
             <option value="">Created</option>
         </select>
     </div>
     <span class="glyphicons glyphicons-delete"></span>
     <div class="container divTable">
         <div class="row divTableRow divTableHeading">
-            <div class="col-sm-2 divTableHead">Project
+            <div class="col-sm-2 divTableHead">Project</div>
+            <div ng-if="!c.showProgressBar()">
+                <div class="col-sm-1 divTableHead" ng-repeat="state in c.data.states track by $index" ng-class="{active: state.value.value === c.filter_state.value.value}"
+                     ng-click="c.setFilter(state)">
+                    <span ng-if="state.value.value === c.filter_state.value.value" class="alert-danger fa fa-times"></span> {{state.label.display_value}}
+                </div>
             </div>
-            <div class="col-sm-1 divTableHead" ng-click="c.setFilter(state)"
-                 ng-repeat="state in c.data.states track by $index"
-                 ng-class="{active: state.value.value === c.filter_state.value.value}">
-                <span ng-if="state.value.value === c.filter_state.value.value" class="alert-danger fa fa-times"></span>
-                {{state.label.display_value}}
-            </div>
+            <div class="divTableHead" ng-if="c.showProgressBar()"></div>
         </div>
-        <div class="row divTableRow" ng-if="!c.updatingData"
-             ng-repeat="p in c.data.projects track by $index"
-             ng-class="{divTableRowOdd:$odd, divTableEvenRow:$even}">
+        <div class="row divTableRow" ng-if="!c.updatingData" ng-repeat="project in c.data.projects track by $index" ng-class="{divTableRowOdd:$odd, divTableEvenRow:$even}">
             <div class="col-sm-2 divTableCell">
-                <div>{{p.number.display_value}}</div>
-                <div class="text-muted">{{p.short_description.display_value}}</div>
+                <div>{{project.number.display_value}}</div>
+                <div class="text-muted">{{project.short_description.display_value}}</div>
             </div>
             <div class="divTableCell" ng-class="c.progressBarClass()">
-                <div class="checkout-wrap">
+                <div class="checkout-wrap" ng-if="!c.showProgressBar()">
                     <ul class="checkout-bar">
-                        <li ng-style="c.progressBarLength()"
-                            ng-repeat="state in c.data.states track by $index"
-                            ng-class="c.progressBarState(this)"></li>
+                        <li ng-style="c.progressBarLength()" ng-repeat="state in c.data.states track by $index" ng-class="c.progressBarState(this)"></li>
                     </ul>
+                </div>
+                <div class="mobile-progressbar" ng-if="c.showProgressBar()">
+                    <uib-progressbar animate="false" value="c.getProjectAdvancePercentage(project)" type="success">
+                        <b>{{project.state.value}}/{{c.data.states.length}}={{c.getProjectAdvancePercentage(project)}} - {{project.state.display_value}}%</b>
+                    </uib-progressbar>
                 </div>
             </div>
         </div>
         <div class="row divTableRow" ng-if="!c.updatingData">
-            <ul uib-pagination direction-links="false" boundary-links="true" force-ellipses="true"
-                total-items="c.data.pagination.total_items.total"
-                items-per-page="c.data.pagination.items_in_pages"
-                ng-model="c.data.pagination.current_page"
-                max-size="c.data.pagination.max_size"
-                ng-change="c.pageChanged()"></ul>
+            <ul uib-pagination direction-links="false" boundary-links="true" force-ellipses="true" total-items="c.data.pagination.total_items.total" items-per-page="c.data.pagination.items_in_pages"
+                ng-model="c.data.pagination.current_page" max-size="c.data.pagination.max_size" ng-change="c.pageChanged()"></ul>
         </div>
         <div ng-show="c.updatingData" class="row divTableRow">
             <span class="fa fa-spinner fa-2" style="font-size: 2em;"></span>Loading
