@@ -209,4 +209,15 @@ ul.checkout-bar {
   .sorting {
     padding: 1em;
   }
+  .mobile-progressbar {
+    .divTableHeading {
+    }
+    .divTableCell {
+      display: block;
+      padding: 3px 10px;
+    }
+    .info * {
+      display: inline-block;
+    }
+  }
 }
