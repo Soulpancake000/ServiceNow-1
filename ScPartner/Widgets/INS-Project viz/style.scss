@@ -183,18 +183,16 @@ ul.checkout-bar {
       display: table-cell;
       padding: 3px 10px;
       text-align: center;
+      &.active {
+        color: #000000;
+      }
     }
     .divTableCell {
       display: table-cell;
       padding: 3px 10px;
     }
-    .divTableFoot {
-      background-color: #EEE;
-      display: table-footer-group;
-      font-weight: bold;
-    }
-    .divTableBody {
-      display: table-row-group;
+    .divTableRow:hover {
+      background-color: rgba(87, 174, 209, 0.11);
     }
     .divTableRowOdd {
       background-color: #FFFFFF;
@@ -202,23 +200,19 @@ ul.checkout-bar {
     .divTableEvenRow {
       background-color: #ECECEC;
     }
-    .active {
-      color: #000000;
+    &.mobile-progressbar {
+      .divTableHeading {
+      }
+      .divTableCell {
+        display: block;
+      }
+      .info * {
+        display: inline-block;
+      }
     }
   }
   .sorting {
     padding: 1em;
-  }
-  .mobile-progressbar {
-    .divTableHeading {
-    }
-    .divTableCell {
-      display: block;
-      padding: 3px 10px;
-    }
-    .info * {
-      display: inline-block;
-    }
   }
   .spinner {
     font-size: 2em;

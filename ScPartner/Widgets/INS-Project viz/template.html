@@ -8,7 +8,7 @@
     <span class="glyphicons glyphicons-delete"></span>
     <div class="container">
         <div class="divTable" ng-if="!c.showProgressBar()">
-            <div class="row divTableRow divTableHeading">
+            <div class="row divTableHeading">
                 <div class="col-sm-2 divTableHead">Project</div>
                 <div class="col-sm-1 divTableHead" ng-repeat="state in c.data.states track by $index" ng-class="{active: state.value.value === c.filter_state.value.value}"
                      ng-click="c.setFilter(state)">
@@ -21,14 +21,14 @@
                         <div>{{project.number.display_value}}</div>
                         <div class="text-muted">{{project.short_description.display_value}}</div>
                     </div>
-                </a>
-                <div class="divTableCell" ng-class="c.progressBarClass()">
-                    <div class="checkout-wrap">
-                        <ul class="checkout-bar">
-                            <li ng-style="c.progressBarLength()" ng-repeat="state in c.data.states track by $index" ng-class="c.progressBarState(this)"></li>
-                        </ul>
+                    <div class="divTableCell" ng-class="c.progressBarClass()">
+                        <div class="checkout-wrap">
+                            <ul class="checkout-bar">
+                                <li ng-style="c.progressBarLength()" ng-repeat="state in c.data.states track by $index" ng-class="c.progressBarState(this)"></li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
         <!--MOBILE-->
@@ -39,12 +39,12 @@
                         <div class="col-sm-1"><strong>{{project.number.display_value}}</strong></div>
                         <div class="col-sm-1">{{project.short_description.display_value}}</div>
                     </div>
+                    <div class="col-sm-2 divTableCell">
+                        <uib-progressbar animate="false" value="c.getProjectAdvancePercentage(project)" type="success">
+                            <b>{{project.state.display_value}}</b>
+                        </uib-progressbar>
+                    </div>
                 </a>
-                <div class="col-sm-2 divTableCell">
-                    <uib-progressbar animate="false" value="c.getProjectAdvancePercentage(project)" type="success">
-                        <b>{{project.state.display_value}}</b>
-                    </uib-progressbar>
-                </div>
             </div>
         </div>
         <div class="row divTableRow" ng-if="!c.updatingData">
