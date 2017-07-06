@@ -4,10 +4,10 @@ function projectVizClient(spUtil, $scope, $filter) {
         var project = c.data.projects[row.$parent.$index];
         var cl = {
             first: row.$first,
-            active: row.state.value.value == project.state.value,
-            next: row.state.value.value == (project.state.value + 1),
+            active: row.state.value.value === project.state.value,
+            next: row.state.value.value === (project.state.value + 1),
             visited: row.state.value.value < project.state.value,
-            previous: row.state.value.value == (project.state.value - 1)
+            previous: row.state.value.value === (project.state.value - 1)
         };
         cl.fa = cl.active;
         cl['fa-check'] = cl.active;
@@ -26,6 +26,7 @@ function projectVizClient(spUtil, $scope, $filter) {
     };
 
     c.updateData = function (action) {
+        c.updatingData = true;
         c.server.get({
             action: action,
             filter_state: c.filter_state,
@@ -35,11 +36,12 @@ function projectVizClient(spUtil, $scope, $filter) {
             c.filter_state = response.data.filter_state;
             c.data.projects = response.data.projects;
             c.data.pagination = response.data.pagination;
+            c.updatingData = false;
         });
     };
 
     c.setFilter = function (state) {
-        c.filter_state = state;
+        c.filter_state = c.filter_state && state.value.value === c.filter_state.value.value ? undefined : state;
         c.data.pagination.current_page = 1;
         c.updateData('get');
     };
