@@ -29,12 +29,12 @@ function projectVizClient(spUtil, $scope, $filter) {
         c.updatingData = true;
         c.server.get({
             action: action,
-            filter_state: c.filter_state,
-            sortingField: c.data.sortingField,
+            filterState: c.filterState,
+            orderBy: c.data.orderBy,
             pagination: c.data.pagination,
             sortDirection: c.data.sortDirection
         }).then(function (response) {
-            c.filter_state = response.data.filter_state;
+            c.filterState = response.data.filterState;
             c.data.projects = response.data.projects;
             c.data.pagination = response.data.pagination;
             c.updatingData = false;
@@ -42,9 +42,8 @@ function projectVizClient(spUtil, $scope, $filter) {
     };
 
     c.setFilter = function (state) {
-        c.filter_state = c.filter_state && state.value.value === c.filter_state.value.value ? undefined : state;
+        c.filterState = c.filterState && state.value.value === c.filterState.value.value ? undefined : state;
         c.data.pagination.current_page = 1;
-        c.updateData('get');
     };
 
     c.sortProjects = function () {
