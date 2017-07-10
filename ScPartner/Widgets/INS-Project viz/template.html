@@ -1,7 +1,7 @@
 <div class="gp_wrapper">
     <div class="row sorting">
         <label>Sort By:</label>
-        <select ng-model="c.data.orderBy" ng-change="c.sortProjects()" ng-options="sortingField.label for sortingField in c.data.sortingFields track by sortingField.value">
+        <select ng-model="c.data.order_by" ng-change="c.sortProjects()" ng-options="sortingField.label for sortingField in c.data.sorting_fields track by sortingField.value">
         </select>
         <!--<button class="btn" ng-model="c.data.sortDirection" ng-click="(c.data.sortDirection=c.data.sortDirection==='Desc'?'Asc':'Desc') && c.updateData('get')">{{data.sortDirection}}</button>-->
     </div>
@@ -10,15 +10,14 @@
         <div class="divTable" ng-if="!c.showProgressBar()">
             <div class="row divTableHeading">
                 <div class="col-sm-2 divTableHead">Project</div>
-                <div class="col-sm-1 divTableHead" ng-repeat="state in c.data.states track by $index" ng-class="{active: state.value.value === c.filterState.value.value}"
-                     ng-click="c.setFilter(state);c.updateData('get');">
-                    <span ng-if="state.value.value === c.filterState.value.value" class="alert-danger fa fa-times"></span> {{state.label.display_value}}
+                <div class="col-sm-1 divTableHead" ng-repeat="state in c.data.states track by $index" ng-class="{active: state.value.value === c.filter_state.value.value}"
+                     ng-click="c.setFilter(state);">
+                    <span ng-if="state.value.value === c.filter_state.value.value" class="alert-danger fa fa-times"></span> {{state.label.display_value}}
                 </div>
             </div>
             <div class="row divTableRow" ng-if="!c.updatingData" ng-repeat="project in c.data.projects track by $index" ng-class="{divTableRowOdd:$odd, divTableEvenRow:$even}">
                 <a href="inspire?id=form&table={{project.table}}&sys_id={{project.sys_id.display_value}}">
                     <div class="col-sm-2 divTableCell">
-                        <!--<div>{{project[c.data.sortingField.value].display_value}}</div>-->
                         <div>{{project.number.display_value}}</div>
                         <div class="text-muted">{{project.short_description.display_value}}</div>
                     </div>
