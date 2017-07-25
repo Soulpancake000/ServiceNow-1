@@ -1,9 +1,15 @@
+/**
+ * @name:       Updates Opportunity On Account Changed
+ * @UIType:     Desktop
+ * @variable:   account
+ * @type:       onChange
+ */
 function onChange(control, oldValue, newValue, isLoading) {
     if (isLoading) {
         return;
     }
-
-    var helper = (new GPAlignListCollectorTo('assigned_to', 'u_incidents', 'incident', 'number', 'sys_id'));
+    //UI Script GPAlignListCollectorTo
+    var helper = (new GPAlignListCollectorTo('account', 'opportunity', 'sales_opportunity', 'name', 'sys_id'));
     if (window.gp_alignListCollector.firstLoad) {
         return;
     }
@@ -11,3 +17,4 @@ function onChange(control, oldValue, newValue, isLoading) {
     helper.showOptions();
     window.gp_alignListCollector.firstLoad = true;
 }
+
