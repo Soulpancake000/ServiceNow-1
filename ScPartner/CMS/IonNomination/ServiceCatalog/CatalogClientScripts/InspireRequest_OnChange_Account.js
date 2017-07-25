@@ -8,10 +8,11 @@ function onChange(control, oldValue, newValue, isLoading) {
     if (isLoading || newValue === '') {
         return;
     }
-    //UI Script - GPAlignListCollectorTo
-    var helper = new GPAlignListCollectorTo('account', 'opportunity', 'sales_opportunity', 'name', 'sys_id');
-    helper.initOnChange(control, oldValue, newValue, isLoading);
-    helper.fetchItems();
-    helper.removeSelectedOptions();
-    helper.showOptions();
+    if (typeof window.GPAlignListCollectorTo !== "object") {
+        window.GPAlignListCollectorTo = new GPAlignListCollectorTo('account', 'opportunity', 'sales_opportunity', 'name', 'sys_id');
+    }
+    window.GPAlignListCollectorTo.initOnChange(control, oldValue, newValue, isLoading);
+    window.GPAlignListCollectorTo.fetchItems();
+    window.GPAlignListCollectorTo.removeSelectedOptions();
+    window.GPAlignListCollectorTo.showOptions();
 }

@@ -1,14 +1,15 @@
 /**
- * @name        Updates Incidents On Incidents Changed
- * @UiType      onChange
- * @Variable    u_incidents
+ * @name:       Updates Opportunity On Opportunity Changed
+ * @UIType:     Desktop
+ * @variable:   account
+ * @type:       onChange
  */
 function onChange(control, oldValue, newValue, isLoading) {
     if (isLoading) {
         return;
     }
     if (typeof window.GPAlignListCollectorTo !== "object") {
-        window.GPAlignListCollectorTo = new GPAlignListCollectorTo('assigned_to', 'u_incidents', 'incident', 'number', 'sys_id');
+        window.GPAlignListCollectorTo = new GPAlignListCollectorTo('account', 'opportunity', 'sales_opportunity', 'name', 'sys_id');
     }
     if (window.GPAlignListCollectorTo.firstLoad) {
         return;

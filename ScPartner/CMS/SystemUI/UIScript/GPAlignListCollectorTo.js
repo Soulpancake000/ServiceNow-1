@@ -12,9 +12,14 @@ GPAlignListCollectorTo.prototype = {
             display: listCollectorDisplay,
             value: listCollectorValue
         };
-        this.availableOptions = document.getElementById(this.listCollectorField.name + '_select_0');
-        this.selectedOptions = document.getElementById(this.listCollectorField.name + '_select_1');
-        window.gp_alignListCollector = window.gp_alignListCollector || {fetchedItems: {}};
+        this.availableOptions = gel(this.listCollectorField.name + '_select_0');
+        this.selectedOptions = gel(this.listCollectorField.name + '_select_1');
+        this.fetchedItems = {};
+    },
+    hideSearch: function () {
+        //hide search since it won't work with this integration
+        gel(this.listCollectorField.name + '_select_0_search_row').classList.add('hide');
+        gel(this.listCollectorField.name + '_select_1_search_row').classList.add('hide');
     },
     initOnChange: function (control, oldValue, newValue, isLoading) {
         this.control = control;
@@ -29,7 +34,7 @@ GPAlignListCollectorTo.prototype = {
         }
         this.removeAvailableOptions();
 
-        var fetchedItems = window.gp_alignListCollector.fetchedItems[g_form.getValue(this.alignTo)] || [];
+        var fetchedItems = this.fetchedItems[g_form.getValue(this.alignTo)] || [];
 
         //If the item has been fetched already add the options
         if (fetchedItems.length) {
@@ -54,7 +59,7 @@ GPAlignListCollectorTo.prototype = {
                 this.availableOptions.append(option);
             }
         }
-        window.gp_alignListCollector.fetchedItems[g_form.getValue(this.alignTo)] = fetchedItems;
+        this.fetchedItems[g_form.getValue(this.alignTo)] = fetchedItems;
     },
     showOptions: function () {
         for (var idx = 0; idx < this.availableOptions.options.length; idx++) {
