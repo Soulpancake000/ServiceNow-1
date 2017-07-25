@@ -1,13 +1,19 @@
+/**
+ * @name        Updates Incidents On Incidents Changed
+ * @UiType      onChange
+ * @Variable    u_incidents
+ */
 function onChange(control, oldValue, newValue, isLoading) {
     if (isLoading) {
         return;
     }
-
-    var helper = (new GPAlignListCollectorTo('assigned_to', 'u_incidents', 'incident', 'number', 'sys_id'));
-    if (window.gp_alignListCollector.firstLoad) {
+    if (typeof window.GPAlignListCollectorTo !== "object") {
+        window.GPAlignListCollectorTo = new GPAlignListCollectorTo('assigned_to', 'u_incidents', 'incident', 'number', 'sys_id');
+    }
+    if (window.GPAlignListCollectorTo.firstLoad) {
         return;
     }
-    helper.initOnChange(control, oldValue, newValue, isLoading);
-    helper.showOptions();
-    window.gp_alignListCollector.firstLoad = true;
+    window.GPAlignListCollectorTo.initOnChange(control, oldValue, newValue, isLoading);
+    window.GPAlignListCollectorTo.showOptions();
+    window.GPAlignListCollectorTo.firstLoad = true;
 }
