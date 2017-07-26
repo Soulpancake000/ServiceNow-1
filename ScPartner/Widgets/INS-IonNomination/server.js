@@ -20,30 +20,53 @@
                 'sys_id',
                 'state'
             ],
-            request: []
+            request: [
+                'sys_id',
+                'number',
+                'u_incidents',
+            ]
         }
-    };
+    }, opportunities = {}, requests = {sysIds: []}, requestOpportunityMap = {};
     serviceDispatch();
 
     //fetch requests
-    var opportunities = fetchOpportunities();
+    fetchData();
 
     //Assign values to `data`
     data.opportunities = opportunities;
+    data.requests = requests;
+    data.requestOpportunityMap = requestOpportunityMap;
     data.serverConfig = config;
-    console.log(opportunities);
 
-    function fetchOpportunities() {
+    function fetchData() {
         var gr = new GlideRecord(config.opportunityTable);
         gr = setPagination(gr);
-        var items = [];
-        //Fetch
+
+        //Fetch Opportunities
         gr.query();
         while (gr.next()) {
-            var grRecord = $sp.getFieldsObject(gr, config.attributes.opportunity.join(','));
-            items.push(grRecord);
+            var gRecord = $sp.getFieldsObject(gr, config.attributes.opportunity.join(','));
+            opportunities[gRecord.sys_id.value] = gRecord;
+            requests.sysIds.push(gRecord.sys_id.value);
         }
-        return items;
+
+        //Fetch Requests of opportunities
+        var grReq = new GlideRecord(config.requestTable);
+        //get requests that has at least one opportunity
+        grReq.addEncodedQuery('u_incidentsLIKE' + requests.sysIds.join('^ORu_incidentsLIKE'));
+        grReq.chooseWindow(0, 5);
+        grReq.query();
+        while (grReq.next()) {
+            gRecord = $sp.getFieldsObject(grReq, config.attributes.request.join(','));
+            requests[gRecord.sys_id.value] = gRecord;
+            gRecord.u_incidents.value.split(',').forEach(function (oppSysId) {
+                if (requestOpportunityMap[oppSysId]) {
+                    requestOpportunityMap[oppSysId].push(gRecord.sys_id.value);
+                } else {
+                    requestOpportunityMap[oppSysId] = [gRecord.sys_id.value];
+                }
+            });
+        }
     }
 
     function serviceDispatch() {
@@ -67,3 +90,17 @@
     }
 
 })();
+function toObject(recordToPackage) {
+    var packageToSend = {};
+    for (var property in recordToPackage) {
+        try {
+            packageToSend[property] = {
+                display: recordToPackage[property].getDisplayValue(),
+                value: recordToPackage.getValue(property)
+            };
+        } catch (err) {
+
+        }
+    }
+    return packageToSend;
+}
