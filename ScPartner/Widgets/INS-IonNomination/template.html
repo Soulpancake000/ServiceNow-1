@@ -1,6 +1,49 @@
-<div>
-    <p>
-        Opportunities should be captured in a way that we can create a report (show me a list of all opportunities aligned to all requests by engagement type). (4hrs)
-    <p>
-        <!-- your widget template -->
+<div class="gp_wrapper">
+    <div class="container">
+        <div class="divTable">
+            <div class="row divTableHeading">
+                <div class="col-sm-1 divTableHead">Opportunity</div>
+                <div class="col-sm-1 divTableHead">Requests</div>
+            </div>
+            <div class="row divTableRow" ng-repeat="opportunity in c.data.opportunities track by $index" ng-class="{divTableRowOdd:$odd, divTableEvenRow:$even}">
+                <a href="inspire?id=form&table={{data.serverConfig.opportunityTable}}&sys_id={{opportunity.sys_id.display_value}}">
+                    <div class="col-sm-2 divTableCell">
+                        <div>{{opportunity.number.display_value}}</div>
+                        <div class="text-muted">{{opportunity.short_description.display_value}}</div>
+                    </div>
+                    <div class="divTableCell" ng-class="c.progressBarClass()">
+                        <div class="checkout-wrap">
+                            <ul class="checkout-bar">
+                                <li ng-style="c.progressBarLength()" ng-repeat="state in c.data.states track by $index" ng-class="c.progressBarState(this)"></li>
+                            </ul>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <!--MOBILE
+        <div class="mobile-progressbar divTable" ng-if="c.showProgressBar()">
+            <div class="row divTableRow" ng-if="!c.updatingData" ng-repeat="opportunity in c.data.opportunitys track by $index" ng-class="{divTableRowOdd:$odd, divTableEvenRow:$even}">
+                <a href="inspire?id=form&table={{opportunity.table}}&sys_id={{opportunity.sys_id.display_value}}">
+                    <div class="row col-sm-2 divTableCell info">
+                        <div class="col-sm-1"><strong>{{opportunity.number.display_value}}</strong></div>
+                        <div class="col-sm-1">{{opportunity.short_description.display_value}}</div>
+                    </div>
+                    <div class="col-sm-2 divTableCell">
+                        <uib-progressbar animate="false" value="c.getProjectAdvancePercentage(opportunity)" type="success">
+                            <b>{{opportunity.state.display_value}}</b>
+                        </uib-progressbar>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="row divTableRow" ng-if="!c.updatingData">
+            <ul uib-pagination direction-links="false" boundary-links="true" force-ellipses="true" total-items="c.data.pagination.total_items" items-per-page="c.data.pagination.items_in_pages"
+                ng-model="c.data.pagination.current_page" max-size="c.data.pagination.max_size" ng-change="c.pageChanged()"></ul>
+        </div>
+        <div ng-show="c.updatingData" class="row divTableRow">
+            <span class="fa fa-spinner fa-2 spinner"></span>Loading
+        </div>
+        -->
+    </div>
 </div>

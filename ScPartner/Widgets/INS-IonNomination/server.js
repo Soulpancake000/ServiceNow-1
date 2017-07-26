@@ -1,41 +1,46 @@
 (function () {
     /* populate the 'data' object */
     /* e.g., data.table = $sp.getValue('table'); */
-    var opportunitiesTable = 'u_incidents',
-        requestTable = 'u_ion_nomination',
-        Pagination = {
+    var config = {
+        opportunityTable: 'incident',
+        requestTable: 'u_ion_nomination',
+        Pagination: {
             items_in_pages: 10,
             current_page: 1,
             max_size: 10,
             total_items: 0
         },
-        sortDirection = 'Desc',
-        projectAttributes = [
-            'assigned_to',
-            'company',
-            'description',
-            'u_incidents',
-            'number',
-            'sys_id',
-            'state'
-        ];
+        sortDirection: 'Desc',
+        attributes: {
+            opportunity: [
+                'assigned_to',
+                'category',
+                'short_description',
+                'number',
+                'sys_id',
+                'state'
+            ],
+            request: []
+        }
+    };
 
 
     //fetch requests
-    var gr = new GlideRecord(requestTable);
-    var requests = fetchItems(gr);
+    var opportunities = fetchOpportunities();
 
     //Assign values to `data`
-    data.requests = requests;
-    console.log(requests);
+    data.opportunities = opportunities;
+    data.serverConfig = config;
+    console.log(opportunities);
 
-    function fetchItems(gr) {
+    function fetchOpportunities() {
+        var gr = new GlideRecord(config.opportunitiesTable);
         gr = setPagination(gr);
         var items = [];
         //Fetch
         gr.query();
         while (gr.next()) {
-            var grRecord = $sp.getFieldsObject(gr, projectAttributes.join(','));
+            var grRecord = $sp.getFieldsObject(gr, config.attributes.opportunity.join(','));
             items.push(grRecord);
         }
         return items;
@@ -54,9 +59,9 @@
 
     function setPagination(gr) {
         gr.query();
-        Pagination.total_items = gr.getRowCount();
-        var start = (Pagination.current_page - 1) * Pagination.items_in_pages,
-            end = (Pagination.current_page) * Pagination.items_in_pages;
+        config.Pagination.total_items = gr.getRowCount();
+        var start = (config.Pagination.current_page - 1) * config.Pagination.items_in_pages,
+            end = (config.Pagination.current_page) * config.Pagination.items_in_pages;
         gr.chooseWindow(start, end);
         return gr;
     }
