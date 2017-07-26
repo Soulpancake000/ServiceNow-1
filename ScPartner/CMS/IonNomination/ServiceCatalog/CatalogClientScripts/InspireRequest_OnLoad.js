@@ -1,3 +1,8 @@
+/**
+ * @name:       Hide search of ListCollector
+ * @UIType:     Desktop
+ * @type:       onLoad
+ */
 function onLoad() {
     //Type appropriate comment here, and begin script below
     if (typeof window.GPAlignListCollectorTo !== "object") {

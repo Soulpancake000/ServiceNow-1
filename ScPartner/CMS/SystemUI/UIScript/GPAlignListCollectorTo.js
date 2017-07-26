@@ -1,6 +1,7 @@
 /**
- * @ApiName:     GP-Align List Collector To A Referenced
+ * @name:        GPAlignListCollectorTo
  * @description: Align a List Collector variable in record producers to referenced value
+ * @application: Global
  */
 var GPAlignListCollectorTo = Class.create();
 GPAlignListCollectorTo.prototype = {
