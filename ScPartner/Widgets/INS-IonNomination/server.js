@@ -5,10 +5,11 @@
             opportunityTable: 'incident',
             requestTable: 'u_ion_nomination',
             pagination: {
-                items_in_pages: 60,
+                items_in_page: [10, 15, 50, 100],
                 current_page: 1,
                 max_size: 10,
-                total_items: 0
+                total_items: 0,
+                items_per_page: 10
             },
             sortDirection: 'Desc',
             attributes: {
@@ -35,7 +36,6 @@
             filter: {value: ''}
         },
         opportunities = [],
-        requests = {},
         requestOpportunityMap = {opportunities: {}, requestsInOpp: {}},
         opportunitiesSysId = [];
 
@@ -65,11 +65,14 @@
         gr = setPagination(gr);
 
         //Fetch Opportunities
-        console.log(config.opportunityTable + ' query= ' + gr.getEncodedQuery());
         gr.query();
+        //if there is no records due to search
+        if (!gr.hasNext()) {
+            return;
+        }
+
         var idx = 0;
         while (gr.next()) {
-            console.log(gr.getValue(config.sort.by));
             var gRecord = $sp.getFieldsObject(gr, config.attributes.opportunity.join(','));
             //Initialize requests variable
             gRecord.requests = [];
@@ -83,7 +86,6 @@
         //Fetch requests of opportunities
         var grReq = new GlideRecord(config.requestTable);
         grReq.addEncodedQuery('u_incidentsLIKE' + opportunitiesSysId.join('^ORu_incidentsLIKE'));
-        console.log(config.requestTable + ' query= ' + grReq.getEncodedQuery());
         grReq.query();
         while (grReq.next()) {
             gRecord = $sp.getFieldsObject(grReq, config.attributes.request.join(','));
@@ -106,8 +108,8 @@
     function setPagination(gr) {
         gr.query();
         config.pagination.total_items = gr.getRowCount();
-        var start = (config.pagination.current_page - 1) * config.pagination.items_in_pages,
-            end = (config.pagination.current_page) * config.pagination.items_in_pages;
+        var start = (config.pagination.current_page - 1) * config.pagination.items_per_page,
+            end = (config.pagination.current_page) * config.pagination.items_per_page;
         gr.chooseWindow(start, end);
         return gr;
     }

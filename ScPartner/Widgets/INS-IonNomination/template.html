@@ -1,8 +1,16 @@
 <div class="gp_wrapper">
-    <div class="filter">
-        <input ng-model="c.data.config.filter.value" ng-keyup="$event.keyCode == 13 ? c.updateData('get') : null"/>
-        <button ng-click="c.updateData('get')" placeholder="Search">search</button>
+    <div class="form-inline">
+        <div class="col-sm-3">
+            <input class="form-control" ng-model="c.data.config.filter.value" ng-keyup="$event.keyCode == 13 ? c.updateData('get') : null"/>
+            <button class="btn btn-primary" ng-click="c.updateData('get')" placeholder="Search">search</button>
+        </div>
+        <div class="col-sm-4">
+            <label>Items per page</label>
+            <select class="form-control" ng-options="itemsInPage for itemsInPage in c.data.config.pagination.items_in_page"
+                    ng-model="c.data.config.pagination.items_per_page" ng-change="c.data.config.pagination.current_page = 1; c.updateData('get')"></select>
+        </div>
     </div>
+
     <div class="container">
         <div class="divTable" ng-if="!c.updatingData">
             <div class="row divTableHeading">
@@ -10,7 +18,9 @@
                 <div class="col-sm-2 divTableHead" ng-click="c.sort('assigned_to')">Assigned To/Opportunity</div>
                 <div class="col-sm-8 divTableHead" ng-click="">Requests/Nomination</div>
             </div>
-            <div class="row divTableRow" ng-repeat="opportunity in c.data.opportunities" ng-class="{divTableRowOdd:$odd, divTableEvenRow:$even}">
+            <h1 ng-if="!c.data.opportunities.length">No Records found</h1>
+            <div class="row divTableRow" ng-repeat="opportunity in c.data.opportunities" ng-class="{divTableRowOdd:$odd, divTableEvenRow:$even}"
+                 ng-if="c.data.opportunities.length">
                 <a href="nav_to.do?uri={{c.data.config.opportunityTable}}.do?sys_id={{opportunity.sys_id.display_value}}">
                     <div class="col-sm-2 divTableCell">
                         <div>{{opportunity.number.display_value}}</div>
@@ -43,9 +53,9 @@
         </div>
                 -->
         <!-- PAGINATION -->
-        <div class="row divTableRow" ng-if="!c.updatingData">
+        <div class="row divTableRow" ng-if="!c.updatingData && c.data.opportunities.length">
             <ul uib-pagination direction-links="false" boundary-links="true" force-ellipses="true" total-items="c.data.config.pagination.total_items"
-                items-per-page="c.data.config.pagination.items_in_pages"
+                items-per-page="c.data.config.pagination.items_per_page"
                 ng-model="c.data.config.pagination.current_page" max-size="c.data.config.pagination.max_size" ng-change="c.updateData('get')"></ul>
         </div>
         <!--SPINNER-->
