@@ -2,48 +2,54 @@
     /* populate the 'data' object */
     /* e.g., data.table = $sp.getValue('table'); */
     var config = {
-        opportunityTable: 'incident',
-        requestTable: 'u_ion_nomination',
-        pagination: {
-            items_in_pages: 60,
-            current_page: 1,
-            max_size: 10,
-            total_items: 0
+            opportunityTable: 'incident',
+            requestTable: 'u_ion_nomination',
+            pagination: {
+                items_in_pages: 60,
+                current_page: 1,
+                max_size: 10,
+                total_items: 0
+            },
+            sortDirection: 'Desc',
+            attributes: {
+                opportunity: [
+                    'assigned_to',
+                    'category',
+                    'short_description',
+                    'number',
+                    'sys_id',
+                    'state',
+                    'account'
+                ],
+                request: [
+                    'sys_id',
+                    'number',
+                    'u_incidents',
+                    'account'
+                ]
+            },
+            sort: {
+                by: 'number',
+                direction: 'DESC'
+            },
+            filter: {value: ''}
         },
-        sortDirection: 'Desc',
-        attributes: {
-            opportunity: [
-                'assigned_to',
-                'category',
-                'short_description',
-                'number',
-                'sys_id',
-                'state',
-                'account'
-            ],
-            request: [
-                'sys_id',
-                'number',
-                'u_incidents',
-                'account'
-            ]
-        },
-        sort: {
-            by: 'number',
-            direction: 'DESC'
-        },
-        filter: {value: ''}
-    }, opportunities = {}, requests = {sysIds: []}, requestOpportunityMap = {};
+        opportunities = [],
+        requests = {},
+        requestOpportunityMap = {opportunities: {}, requestsInOpp: {}},
+        opportunitiesSysId = [];
 
     serviceDispatch();
     fetchData();
 
     //Assign values to `data`
     data.opportunities = opportunities;
-    data.requests = requests;
-    data.requestOpportunityMap = requestOpportunityMap;
     data.config = config;
 
+
+    /*
+     FUNCTIONS
+     */
     function fetchData() {
         var gr = new GlideRecord(config.opportunityTable);
         //Sort
@@ -59,32 +65,31 @@
         gr = setPagination(gr);
 
         //Fetch Opportunities
-        console.log(gr.getEncodedQuery());
+        console.log(config.opportunityTable + ' query= ' + gr.getEncodedQuery());
         gr.query();
+        var idx = 0;
         while (gr.next()) {
-            // console.log(toObject(gr));
             console.log(gr.getValue(config.sort.by));
             var gRecord = $sp.getFieldsObject(gr, config.attributes.opportunity.join(','));
-            opportunities[gRecord.sys_id.value] = gRecord;
-            requests.sysIds.push(gRecord.sys_id.value);
+            //Initialize requests variable
+            gRecord.requests = [];
+            opportunities.push(gRecord);
+
+            //Save in dictionary the index of the opportunity, it'll be used to map the requestsInOpp associated
+            opportunitiesSysId.push(gRecord.sys_id.value);
+            requestOpportunityMap.opportunities[gRecord.sys_id.value] = idx++;
         }
 
-        //Fetch Requests of opportunities
+        //Fetch requests of opportunities
         var grReq = new GlideRecord(config.requestTable);
-        //get requests that has at least one opportunity
-        grReq.addEncodedQuery('u_incidentsLIKE' + requests.sysIds.join('^ORu_incidentsLIKE'));
-        console.log(grReq.getEncodedQuery());
+        grReq.addEncodedQuery('u_incidentsLIKE' + opportunitiesSysId.join('^ORu_incidentsLIKE'));
+        console.log(config.requestTable + ' query= ' + grReq.getEncodedQuery());
         grReq.query();
         while (grReq.next()) {
-            //console.log(toObject(grReq));
             gRecord = $sp.getFieldsObject(grReq, config.attributes.request.join(','));
-            requests[gRecord.sys_id.value] = gRecord;
             gRecord.u_incidents.value.split(',').forEach(function (oppSysId) {
-                if (requestOpportunityMap[oppSysId]) {
-                    requestOpportunityMap[oppSysId].push(gRecord.sys_id.value);
-                } else {
-                    requestOpportunityMap[oppSysId] = [gRecord.sys_id.value];
-                }
+                var oppIdx = requestOpportunityMap.opportunities[oppSysId];
+                opportunities[oppIdx].requests.push(gRecord);
             });
         }
     }
@@ -108,17 +113,3 @@
     }
 
 })();
-function toObject(recordToPackage) {
-    var packageToSend = {};
-    for (var property in recordToPackage) {
-        try {
-            packageToSend[property] = {
-                display: recordToPackage[property].getDisplayValue(),
-                value: recordToPackage.getValue(property)
-            };
-        } catch (err) {
-
-        }
-    }
-    return packageToSend;
-}
