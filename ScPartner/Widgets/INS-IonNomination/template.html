@@ -15,8 +15,8 @@
         <div class="divTable" ng-if="!c.updatingData">
             <div class="row divTableHeading">
                 <div class="col-sm-2 divTableHead" ng-click="c.sort('number')">Opportunity</div>
-                <div class="col-sm-2 divTableHead" ng-click="c.sort('assigned_to')">Assigned To/Opportunity</div>
-                <div class="col-sm-8 divTableHead" ng-click="">Requests/Nomination</div>
+                <div class="col-sm-2 divTableHead" ng-click="c.sort('account')">Account</div>
+                <div class="col-sm-8 divTableHead" ng-click="">Inspire Request</div>
             </div>
             <h1 ng-if="!c.data.opportunities.length">No Records found</h1>
             <div class="row divTableRow" ng-repeat="opportunity in c.data.opportunities" ng-class="{divTableRowOdd:$odd, divTableEvenRow:$even}"
@@ -24,10 +24,10 @@
                 <a href="nav_to.do?uri={{c.data.config.opportunityTable}}.do?sys_id={{opportunity.sys_id.display_value}}">
                     <div class="col-sm-2 divTableCell">
                         <div>{{opportunity.number.display_value}}</div>
-                        <div class="text-muted">{{opportunity.short_description.display_value}}</div>
+                        <div class="text-muted">{{opportunity.name.display_value}}</div>
                     </div>
                     <div class="col-sm-2 divTableCell">
-                        <div class="text-muted">{{opportunity.assigned_to.display_value}}</div>
+                        <div class="text-muted">{{opportunity.account.display_value}}</div>
                     </div>
                     <div class="col-sm-8 divTableCell">
                         <div ng-repeat="request in opportunity.requests">{{request.number.value}}</div>

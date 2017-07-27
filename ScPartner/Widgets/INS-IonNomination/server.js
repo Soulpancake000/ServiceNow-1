@@ -2,8 +2,8 @@
     /* populate the 'data' object */
     /* e.g., data.table = $sp.getValue('table'); */
     var config = {
-            opportunityTable: 'incident',
-            requestTable: 'u_ion_nomination',
+            opportunityTable: 'sales_opportunity',
+            requestTable: 'x_snc_ion_nomination',
             pagination: {
                 items_in_page: [10, 15, 50, 100],
                 current_page: 1,
@@ -14,18 +14,17 @@
             sortDirection: 'Desc',
             attributes: {
                 opportunity: [
-                    'assigned_to',
-                    'category',
+                    'account',
                     'short_description',
                     'number',
+                    'name',
                     'sys_id',
-                    'state',
                     'account'
                 ],
                 request: [
                     'sys_id',
                     'number',
-                    'u_incidents',
+                    'opportunity',
                     'account'
                 ]
             },
@@ -85,11 +84,11 @@
 
         //Fetch requests of opportunities
         var grReq = new GlideRecord(config.requestTable);
-        grReq.addEncodedQuery('u_incidentsLIKE' + opportunitiesSysId.join('^ORu_incidentsLIKE'));
+        grReq.addEncodedQuery('opportunityLIKE' + opportunitiesSysId.join('^ORopportunityLIKE'));
         grReq.query();
         while (grReq.next()) {
             gRecord = $sp.getFieldsObject(grReq, config.attributes.request.join(','));
-            gRecord.u_incidents.value.split(',').forEach(function (oppSysId) {
+            gRecord.opportunity.value.split(',').forEach(function (oppSysId) {
                 var oppIdx = requestOpportunityMap.opportunities[oppSysId];
                 opportunities[oppIdx].requests.push(gRecord);
             });
