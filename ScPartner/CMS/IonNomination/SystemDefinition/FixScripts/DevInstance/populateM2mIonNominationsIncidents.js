@@ -16,16 +16,6 @@ do {
     var start = 0 + (page * batchSize);
     var end = batchSize + (page++ * batchSize);
 
-    //TEST
-    // gIncident = new GlideRecord('incident');
-    // gIncident.chooseWindow(start, end);
-    // gIncident.query();
-    // var incidents = [];
-    // while (gIncident.next()) {
-    //     incidents.push(gIncident.getValue('number'));
-    // }
-
-
     gRequest = new GlideRecord(ionRequestsTable);
     gRequest.addNotNullQuery('u_incidents');
     gRequest.chooseWindow(start, end);
