@@ -5,20 +5,65 @@ var AlignIncidentsToRequest = Class.create();
 AlignIncidentsToRequest.prototype = {
     initialize: function (options) {
         for (var att in options) {
-            this[att] = options[att];
+            if (!this.hasOwnProperty(att)) {
+                this[att] = options[att];
+            }
         }
     },
 
     updateM2MIncidentsRequest: function () {
+        // Delete M2M records that aren't in IonRequest
+        var gIncNom = new GlideRecord('u_m2m_ion_nominations_incidents');
+        gIncNom.addEncodedQuery('u_ion_nomination=' + this.request + '^u_incidentNOT IN' + this.incidents);
+        // gs.addInfoMessage('it will delete ' + gIncNom.getEncodedQuery());
+        gIncNom.query();
+        //@TEST: Verify it will delete the correct ones, meaning that the M2M BR has already finished
+        // and the incident has already removed from M2M table
+        // while (gIncNom.next()) {
+            // gs.addInfoMessage('it will delete ' + gIncNom.getDisplayValue('u_incident'));
+        // }
+        gIncNom.deleteMultiple();
+
+        // Insert the missing incidents in M2M
         var request = this.request;
+        var previous_incidents = this.previous_incidents;
         this.incidents.split(',').forEach(function (sysIdInc) {
-            var glideIncNom = new GlideRecord('u_m2m_ion_nominations_incidents');
-            glideIncNom.initialize();
-            glideIncNom.u_incident = sysIdInc;
-            glideIncNom.u_ion_nomination = request;
-            glideIncNom.insert();
+            gs.addErrorMessage(previous_incidents.indexOf(sysIdInc));
+            //if the record is new, insert it in M2M
+            if (previous_incidents.indexOf(sysIdInc) === -1 || previous_incidents.indexOf(sysIdInc) === undefined) {
+                // gs.addInfoMessage('it will insert ' + sysIdInc + ' ' + this.getIncidentNumber(sysIdInc));
+                var glideIncNom = new GlideRecord('u_m2m_ion_nominations_incidents');
+                glideIncNom.initialize();
+                glideIncNom.u_incident = sysIdInc;
+                glideIncNom.u_ion_nomination = request;
+                glideIncNom.insert();
+            }
         });
     },
+
+    getIonRequestNumber: function (id) {
+        var gr = new GlideRecord('u_ion_nomination');
+        gr.addQuery('sys_id', id);
+        gr.query();
+        gr.next();
+        return gr.getValue('number') + ' id:' + id;
+    },
+    getM2MRequestNumber: function (id) {
+        var gr = new GlideRecord('u_m2m_ion_nominations_incidents');
+        gr.addQuery('sys_id', id);
+        gr.query();
+        gr.next();
+        return gr.getValue('number') + ' id:' + id;
+    },
+
+    getIncidentNumber: function (id) {
+        var gr = new GlideRecord('incident');
+        gr.addEncodedQuery('sys_id=' + id);
+        gr.query();
+        gr.next();
+        return gr.getValue('number') + ' id:' + id;
+    },
+
     deleteM2MIncidents: function () {
         var glideIncNom = new GlideRecord('u_m2m_ion_nominations_incidents');
         glideIncNom.addEncodedQuery('u_ion_nomination=' + this.request);
@@ -60,15 +105,8 @@ AlignIncidentsToRequest.prototype = {
         var incidents = gIonNomination.getValue('u_incidents').split(',').filter(function (incident) {
             return incident != incidentToRemove;
         });
-        gs.addInfoMessage(incidents.join(','));
         gIonNomination.u_incidents = incidents.join(',');
         gIonNomination.update();
     },
     type: 'AlignIncidentsToRequest'
 };
-
-/*
- Options:
- a) create other business rule before delete to update it too.
- b) change all to a workflow
- */
