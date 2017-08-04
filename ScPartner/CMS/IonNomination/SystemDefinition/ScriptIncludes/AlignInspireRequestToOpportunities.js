@@ -15,7 +15,6 @@ AlignOpportunitiesToRequestHelper.prototype = {
     },
 
     updateM2MOpportunitiesRequest: function () {
-        gs.addInfoMessage('Populate m2m incidents from Ion');
         //Delete M2M records that aren't in InspireRequest
         // We are not using deleteMultiple() because we don't want that Glide trigger the business rules on delete.
         // For that reason, we are setting setWorkflow(false)
@@ -72,7 +71,6 @@ AlignOpportunitiesToRequestHelper.prototype = {
     },
 
     updateInspireRequestOpportunities: function () {
-        gs.addInfoMessage('UPDATE/CREATE M2M  ');
         var gInspireRequest = new GlideRecord('x_snc_ion_nomination');
         gInspireRequest.setWorkflow(false);
         gInspireRequest.addQuery('sys_id', this.request);
@@ -97,7 +95,6 @@ AlignOpportunitiesToRequestHelper.prototype = {
      * @param opportunityToRemove
      */
     removeOpportunityFromInspireRequest: function (opportunityToRemove) {
-        gs.addInfoMessage('DELETE M2M  ');
         var gInspireRequest = new GlideRecord('x_snc_ion_nomination');
         gInspireRequest.setWorkflow(false);
         gInspireRequest.addQuery('sys_id', this.request);
