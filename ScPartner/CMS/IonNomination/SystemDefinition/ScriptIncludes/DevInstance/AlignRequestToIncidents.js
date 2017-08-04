@@ -31,7 +31,7 @@ AlignIncidentsToRequest.prototype = {
         this.incidents.split(',').forEach(function (sysIdInc) {
             //if the record is new, insert it in M2M
             if (previous_incidents.indexOf(sysIdInc) === -1 || previous_incidents.indexOf(sysIdInc) === undefined) {
-                gs.addInfoMessage('it will insert ' + sysIdInc + ' ' + this.getIncidentNumber(sysIdInc));
+                gs.addInfoMessage('it will insert ' + sysIdInc + ' ' + this.getOpportunityNumber(sysIdInc));
                 var glideIncNom = new GlideRecord('u_m2m_ion_nominations_incidents');
                 glideIncNom.initialize();
                 glideIncNom.setWorkflow(false);
