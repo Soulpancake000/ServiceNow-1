@@ -66,14 +66,20 @@ AlignIncidentsToRequest.prototype = {
     },
 
     /**
-     * Reference Qualifier: javascript: new AlignIncidentsToRequest().getIncidentM2MIonNomRefQual(current.u_ion_nomination);
+     * Reference Qualifier: javascript: new AlignIncidentsToRequest({request: current.u_ion_nomination}).getIncidentM2MIonNomRefQual()
      * @param ionNominationId
      * @returns {string}
      */
-    getIncidentM2MIonNomRefQual: function (ionNominationId) {
+    getIncidentM2MIonNomRefQual: function () {
         var gIon = new GlideRecord('u_ion_nomination');
-        gIon.get(ionNominationId);
-        return ionNominationId ? 'assigned_to=' + gIon.getValue('assigned_to') : 'assigned_to=NORESULTS';
+        gIon.get(this.request);
+
+        var refQualifier = this.request ?
+            'assigned_to=' + gIon.getValue('assigned_to') + '^sys_idNOT IN' + this._getM2MIncidentsByRequest().join(',') :
+            'assigned_to=NORESULTS';
+        gs.addErrorMessage('XXXX' + refQualifier);
+
+        return refQualifier;
     },
 
     updateRequestIncidentsFromM2MIncidents: function () {
