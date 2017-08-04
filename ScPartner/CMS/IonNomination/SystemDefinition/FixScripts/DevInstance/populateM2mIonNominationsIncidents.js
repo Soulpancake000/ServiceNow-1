@@ -1,29 +1,18 @@
 (function () {
-    enableBusinessRule('u_ion_nomination', false);
-    enableBusinessRule('u_m2m_ion_nominations_incidents', false);
     clearsM2MTable();
     populateM2MTable();
-    enableBusinessRule('u_ion_nomination', true);
-    enableBusinessRule('u_m2m_ion_nominations_incidents', true);
-
-    function enableBusinessRule(table, active) {
-        var gBusinessRule = new GlideRecord('sys_script');
-        gBusinessRule.addEncodedQuery('collection=' + table);
-        gBusinessRule.query();
-        while (gBusinessRule.next()) {
-            gBusinessRule.active = active;
-            gBusinessRule.update();
-        }
-    }
 
     function clearsM2MTable() {
         // Omit the records that are already in m2m table
-        var gM2mRecord = new GlideRecord('u_m2m_ion_nominations_incidents');
-        gM2mRecord.deleteMultiple();
+        var gOpportunityRequest = new GlideRecord('u_m2m_ion_nominations_incidents');
+        gOpportunityRequest.setWorkflow(false);
+        while (gOpportunityRequest.next()) {
+            gOpportunityRequest.deleteRecord();
+        }
     }
 
     function populateM2MTable() {
-        var gAggCount = new GlideAggregate('u_ion_nomination');
+        var gAggCount = new GlideAggregate('x_snc_ion_nomination');
         gAggCount.addAggregate('COUNT');
         gAggCount.query();
         var totalRequests = gAggCount.next() ? gAggCount.getAggregate('COUNT') : 0;
@@ -31,22 +20,23 @@
         var page = 0;
         do {
             var start = 0 + (page * batchSize);
-            var end = batchSize + (page++ * batchSize);
+            var end = batchSize + page++ * batchSize;
 
-            var gRequest = new GlideRecord('u_ion_nomination');
-            gRequest.addNotNullQuery('u_incidents');
-            gRequest.chooseWindow(start, end);
-            gRequest.query();
+            var gInspireRequest = new GlideRecord('x_snc_ion_nomination');
+            gInspireRequest.addNotNullQuery('u_incidents');
+            gInspireRequest.chooseWindow(start, end);
+            gInspireRequest.query();
             var requests = [];
-            while (gRequest.next()) {
-                var requestSysId = gRequest.getValue('sys_id');
-                requests.push(gRequest.getValue('number'));
-                gRequest.getValue('u_incidents').split(',').forEach(function (incSysId) {
-                    var gM2mRecord = new GlideRecord('u_m2m_ion_nominations_incidents');
-                    gM2mRecord.initialize();
-                    gM2mRecord.u_incident = incSysId;
-                    gM2mRecord.u_ion_nomination = requestSysId;
-                    gM2mRecord.update();
+            while (gInspireRequest.next()) {
+                var requestSysId = gInspireRequest.getValue('sys_id');
+                requests.push(gInspireRequest.getValue('number'));
+                gInspireRequest.getValue('u_incidents').split(',').forEach(function (incSysId) {
+                    var gOpportunityRequest = new GlideRecord('u_m2m_ion_nominations_incidents');
+                    gOpportunityRequest.initialize();
+                    gOpportunityRequest.setWorkflow(false);
+                    gOpportunityRequest.u_incident = incSysId;
+                    gOpportunityRequest.u_ion_nomination = requestSysId;
+                    gOpportunityRequest.update();
                 });
             }
             gs.print(end + ' requests processed of ' + totalRequests + ': ' + requests.join(','));

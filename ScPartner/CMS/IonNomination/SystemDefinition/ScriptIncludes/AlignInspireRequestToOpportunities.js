@@ -19,12 +19,12 @@ AlignOpportunitiesToRequestHelper.prototype = {
         //Delete M2M records that aren't in InspireRequest
         // We are not using deleteMultiple() because we don't want that Glide trigger the business rules on delete.
         // For that reason, we are setting setWorkflow(false)
-        var gInspireRequest = new GlideRecord('u_m2m_opportunitie_inspire_requ');
-        gInspireRequest.setWorkflow(false);
-        gInspireRequest.addEncodedQuery('u_inspire_requests=' + this.request + '^u_opportunityNOT IN' + this.opportunities);
-        gInspireRequest.query();
-        while (gInspireRequest.next()) {
-            gInspireRequest.deleteRecord();
+        var gOpportunityRequest = new GlideRecord('u_m2m_opportunitie_inspire_requ');
+        gOpportunityRequest.setWorkflow(false);
+        gOpportunityRequest.addEncodedQuery('u_inspire_requests=' + this.request + '^u_opportunityNOT IN' + this.opportunities);
+        gOpportunityRequest.query();
+        while (gOpportunityRequest.next()) {
+            gOpportunityRequest.deleteRecord();
         }
 
         // Insert the missing incidents in M2M table
@@ -83,12 +83,12 @@ AlignOpportunitiesToRequestHelper.prototype = {
     },
 
     _getM2MOpportunitiesAlignedToRequest: function () {
-        var gInspireRequest = new GlideRecord('u_m2m_opportunitie_inspire_requ');
-        gInspireRequest.addQuery('u_inspire_requests', this.request);
-        gInspireRequest.query();
+        var gOpportunityRequest = new GlideRecord('u_m2m_opportunitie_inspire_requ');
+        gOpportunityRequest.addQuery('u_inspire_requests', this.request);
+        gOpportunityRequest.query();
         var opportunities = [];
-        while (gInspireRequest.next())
-            opportunities.push(gInspireRequest.getValue('u_opportunity'));
+        while (gOpportunityRequest.next())
+            opportunities.push(gOpportunityRequest.getValue('u_opportunity'));
         return opportunities;
     },
 
