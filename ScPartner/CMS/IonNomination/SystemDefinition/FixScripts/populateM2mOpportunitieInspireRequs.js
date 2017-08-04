@@ -6,6 +6,7 @@
         // Omit the records that are already in m2m table
         var gInspireRequest = new GlideRecord('u_m2m_opportunitie_inspire_requ');
         gInspireRequest.setWorkflow(false);
+        gInspireRequest.query();
         while (gInspireRequest.next()) {
             gInspireRequest.deleteRecord();
         }
