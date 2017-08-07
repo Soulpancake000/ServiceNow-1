@@ -37,33 +37,13 @@ function onChange(control, oldValue, newValue, isLoading, $scope) {
         }
     }
     if (!window) {
-        NOW.sp_debug = true;
-        //alert(parseQuery(location.search).sys_id);
-        //alert(location.search.match(/sys_id=\w+/));
         if (isLoading || newValue == '') {
             return;
         }
         var ciSysID = parseQuery(location.search).sys_id;
         var role = g_form.getValue('role');
         var busUnit = g_form.getValue('business_unit') + '';
-        var gbu = new GlideAjax('getBusUnit');
-        gbu.addParam('sysparm_name', 'getBusUnitLocations');
-        gbu.addParam('sysparm_sysid', ciSysID);
-        gbu.addParam('sysparm_bu', busUnit);
-        gbu.addParam('sysparm_role', role);
-
         setListCollectorQuery('location_test_list', 'u_business_unit=' + busUnit + '^u_role=' + role + '^u_catalog_item=' + ciSysID);
-
-        gbu.getXML(function (response) {
-            var grpData = response.responseXML.documentElement.attributes["0"].value.split(';');
-            for (var idx = 0; grpData.length > idx; idx++) {
-                var locationUnit = grpData[idx].split(':');
-                var gListLocationTest = g_list.get('location_test_list');
-                gListLocationTest.addItem(locationUnit[1], locationUnit[0]);
-            }
-
-            //__renderCheckBox(grpData,"BUlocations","Select Business Unit Location",true);
-        });
     }
 
     function setListCollectorQuery(ID, filterString) {
