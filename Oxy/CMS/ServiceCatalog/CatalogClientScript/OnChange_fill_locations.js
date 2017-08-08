@@ -1,3 +1,11 @@
+/**
+ * @Name: fill_locations
+ * @AppliesTo: Variable Set
+ * @UIType: Both
+ * @Type: OnChange
+ * @VariableSet: ATG Locations
+ * @VariableName: Role
+ */
 function onChange(control, oldValue, newValue, isLoading, $scope) {
     if (window) {
         if (isLoading || newValue == '') {
@@ -43,11 +51,13 @@ function onChange(control, oldValue, newValue, isLoading, $scope) {
         var ciSysID = parseQuery(location.search).sys_id;
         var role = g_form.getValue('role');
         var busUnit = g_form.getValue('business_unit') + '';
-        setListCollectorQuery('location_test_list', 'u_business_unit=' + busUnit + '^u_role=' + role + '^u_catalog_item=' + ciSysID);
-    }
-
-    function setListCollectorQuery(ID, filterString) {
-        var gListLocationTest = g_list.get(ID);
+        var filterString = "sys_id=NORESULTS";
+        if (busUnit && role && ciSysID) {
+            filterString = 'u_business_unit=' + busUnit + '^u_role=' + role + '^u_catalog_item=' + ciSysID;
+        } else {
+            g_form.setValue("location_test_list", "");
+        }
+        var gListLocationTest = g_list.get('location_test_list');
         gListLocationTest.reset();
         gListLocationTest.setQuery(filterString);
     }

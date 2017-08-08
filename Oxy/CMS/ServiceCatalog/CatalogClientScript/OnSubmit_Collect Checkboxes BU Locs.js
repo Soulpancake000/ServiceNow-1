@@ -11,10 +11,8 @@ function onSubmit() {
         var LocationNames = '';
         var inputs = document.getElementsByTagName("input");
         for (var i = 0; i < inputs.length; i++) {
-            //alert("for");
             if (inputs[i].type == "checkbox" && inputs[i].id == "BUlocations") {
                 if (inputs[i].checked) {
-                    //alert("checked");
                     chkBoxGroups += inputs[i].value + ',';
                     LocationNames += inputs[i].name + ',';
                 }
@@ -33,5 +31,14 @@ function onSubmit() {
 
         g_form.setValue('location_values', chkBoxGroups);
         g_form.setValue('location_names', LocationNames);
+    }
+    if (!window) {
+        var locationUnits = g_form.getValue('location_test_list');
+        var locationUnitsDisplay = g_form.getDisplayValue('location_test_list');
+        g_form.setValue("location_test_list", "");
+        g_list.get('location_test_list').reset();
+
+        g_form.setValue('location_values', locationUnits);
+        g_form.setValue('location_names', locationUnitsDisplay);
     }
 }
