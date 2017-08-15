@@ -1,0 +1,33 @@
+.action-panel {
+  padding: 2em;
+}
+
+.action-panel li div {
+  width: 46px;
+  display: inline-block;
+}
+
+.action-panel .heading {
+  border-bottom: solid 2px $red;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+ul li {
+  margin: 1em 0;
+}
+
+ul li a {
+  color: $text-color;
+}
+
+.red {
+  color: $red;
+}
+
+ul li img {
+  padding-right: 0.5em;
+}

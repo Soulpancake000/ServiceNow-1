@@ -1,0 +1,12 @@
+<div class="action-panel">
+    <div class="heading">
+        <h3 class="red"><strong>Tickets</strong></h3>
+        <h5><strong>Open, Submit or track a ticket</strong></h5>
+    </div>
+    <ul>
+        <li ng-repeat="ticket in c.data.tickets">
+            <div><img ng-src="{{ticket.img_link}}"/></div>
+            {{ticket.title}}
+        </li>
+    </ul>
+</div>
