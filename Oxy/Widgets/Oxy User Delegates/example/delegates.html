@@ -1,0 +1,114 @@
+<div class="user-delegates-container">
+  <h3>
+    <strong>
+      ${Delegates}
+    </strong>
+    <button class="btn btn-link" ng-click="c.addMode = true;" ng-show="c.data.isLoggedInUsersProfile"> 
+      ${Add Delegates}
+    </button>
+  </h3>
+  <hr>
+  <p>{{delegate.user.fullName}}</p>
+  <div class="row text-center" ng-if="c.data.delegates.length > 0 && !c.addMode">
+    <!-- Deletages -->
+    <div class="col-xs-4" ng-repeat="delegate in c.data.delegates track by delegate.sys_id | limitTo: 3">
+      <div class="thumbnail delegate-thumbnail">
+        <img ng-show="delegate.user.avatar != null" ng-src="{{delegate.user.avatar}}" width="150" height="150"/>
+        <img ng-show="delegate.user.avatar == null" src="Avatar_Placeholder.png" width="150" height="150"/>
+        <div class="caption">
+          <h4 style="color:#00529B;">{{delegate.delegate}}</h4>
+          <small class="text-muted">
+            <span ng-bind="c.convertToDate(delegate.starts) | date:'MMM-dd-yyyy  h:mma'"></span>
+            <span> - </span>
+            <span ng-bind="c.convertToDate(delegate.ends) | date:'MMM-dd-yyyy  h:mma'"></span>
+          </small>
+          <br/>
+          <a class="btn btn-link" ng-click="removeDelegate(delegate)">${Remove delegates}</a>
+        </div>
+      </div>
+    </div>
+    <!-- /Deletages -->
+  </div>
+  <div class="row" ng-if="c.addMode == true">
+    <div class="col-md-12">
+      <form name="newDelegateForm" novalidate>
+        <div class="form-group">
+          <label>${User}</label>
+          <p class="form-control-static">{{user.name}}</p>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" 
+							ng-model="c.data.newDelegate.u_arms_approval" 
+							ng-change="c.ARMSCheck(c.data.newDelegate.u_arms_approval)"> 
+            ${ARMS Approval}
+          </label>
+        </div>
+        <div class="form-group" ng-class="{'has-error': newDelegateForm.delegate.$invalid}">
+          <label>${Delegate}</label>
+          <sn-record-picker 
+						field="c.refDelegateField" 
+						default-query="c.query" 
+						table="'sys_user'" 
+						display-field="'name'" 
+						value-field="'sys_id'" 
+						search-fields="'name'" page-size="100" required="true">
+          </sn-record-picker>
+        </div>
+        <div class="form-group" ng-class="{'has-error': newDelegateForm.start.$invalid}">
+          <label>${Start date}</label>
+          <div class='input-group date' datetimepicker field="c.startDateField" ng-model="c.data.newDelegate.starts" name="start" required>
+            <input type='text' class="form-control rd-only" readonly/>
+            <span class="input-group-addon">
+              <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+          </div>
+        </div>
+        <div class="form-group" ng-class="{'has-error': newDelegateForm.end.$invalid}">
+          <label>${End date}</label>
+          <div class='input-group date' datetimepicker field="c.endDateField" name="end" required ng-model="c.data.newDelegate.ends">
+            <input type='text' class="form-control rd-only" name="end_date" readonly/>
+            <span class="input-group-addon">
+              <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+          </div>
+        </div>
+        <div class="form-group" ng-class="{'has-error': newDelegateForm.reason.$invalid}">
+          <label>${Reason}</label>
+          <input type='text' ng-model="c.data.newDelegate.u_reason" name="reason" class="form-control" required/>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" ng-model="c.data.newDelegate.approvals"> ${Approvals}
+          </label>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" ng-model="c.data.newDelegate.assingments"> ${Assignments}
+          </label>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" ng-model="c.data.newDelegate.notifications"> ${CC notifications}
+          </label>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" ng-model="c.data.newDelegate.invitations"> ${Meeting invitations}
+          </label>
+        </div>
+        <div class="form-group">
+          <div class="pull-right">
+            <button type="submit" class="btn btn-primary" ng-click="c.addDelegate();" ng-disabled="((newDelegateForm.$invalid) || (!c.validDate))">${Save}</button>
+            <button type="submit" class="btn btn-default" ng-click="c.cancelAdd();">${Cancel}</button>
+          </div>
+        </div>
+      </form>
+    </div>  
+  </div>
+  <div class="row text-center" ng-if="!c.data.delegates.length && !c.addMode">
+    <div class="col-md-12">
+      <p>${This user has no delegates yet.}</p>
+    </div>
+  </div>
+</div>
