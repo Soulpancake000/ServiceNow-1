@@ -1,4 +1,4 @@
-function UserDelegatesController($scope, spUtil, $filter) {
+function UserDelegatesController($scope, spUtil, $filter, spModal) {
     /* widget controller */
     var c = this;
     c.addMode = false;
@@ -119,6 +119,20 @@ function UserDelegatesController($scope, spUtil, $filter) {
             return 1;
     }
 
+    $scope.removeDelegate = function (delegate) {
+        spModal.confirm("${Want to remove this delegate?}")
+            .then(function () {
+                c.data.action = 'remove_delegate';
+                c.data.removeDelegate = delegate.sys_id;
+                console.log('sending ' + delegate.sys_id);
+                c.server.update().then(function () {
+                    c.data.action = '';
+                    c.data.removeDelegate = null;
+                    //TODO: will this method work?
+                    spUtil.update($scope);
+                });
+            });
+    };
     /* listeners */
 
     $scope.$on("field.change", function(evt, parms) {

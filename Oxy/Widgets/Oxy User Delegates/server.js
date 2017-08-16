@@ -36,8 +36,25 @@
         data.delegates.push(delegate);
     }
 
-    if(input && input.action === 'add_delegate'){
-        addDelegate(input.newDelegate);
+    if (input && input.action) {
+        console.log(input.action);
+        switch (input.action) {
+            case 'add_delegate':
+                addDelegate(input.newDelegate);
+                break;
+            case 'remove_delegate':
+                removeDelegate(input.removeDelegate);
+                break;
+        }
+    }
+
+    function removeDelegate(delegateId) {
+        var grDelegate = new GlideRecord('sys_user_delegate');
+        grDelegate.get(delegateId);
+        console.log(input.removeDelegate);
+        if (grDelegate.isValidRecord()) {
+            grDelegate.deleteRecord();
+        }
     }
 
     function addDelegate(delegate){
