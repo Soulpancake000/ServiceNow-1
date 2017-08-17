@@ -2,7 +2,7 @@
     <h4>Delegates <button class="btn btn-link" ng-click="c.addMode = true;" ng-show="c.data.isLoggedInUsersProfile"> Add Delegates</button></h4>
     <hr>
     <p>{{delegate.user.fullName}}</p>
-    <div class="row text-center" ng-if="c.data.delegates.length > 0 && !c.addMode">
+    <div class="row text-center" ng-show="c.data.delegates.length > 0 && !c.addMode">
         <div class="col-xs-4" ng-repeat="delegate in c.data.delegates track by delegate.sys_id | limitTo: 3">
             <div class="thumbnail delegate-thumbnail">
                 <img ng-show="delegate.user.avatar != null" ng-src="{{delegate.user.avatar}}" width="150" height="150"/>
@@ -16,13 +16,13 @@
                         <span ng-bind="c.convertToDate(delegate.ends) | date:'MMM-dd-yyyy  h:mma'"></span>
                     </small>
                     <br/>
-                    <a class="btn btn-link" ng-click="c.removeDelegate(delegate)">${Remove}</a>
                     <a class="btn btn-link" ng-click="c.setEditMode(delegate);">${Edit}</a>
+                    <a class="btn btn-link" ng-click="c.removeDelegate(delegate)">${Remove}</a>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row" ng-if="c.addMode === true">
+    <div class="row" ng-show="c.addMode === true">
         <div class="col-md-12">
             <form name="newDelegateForm" novalidate>
                 <div class="form-group">
@@ -67,11 +67,10 @@
                         <button type="submit" class="btn btn-default" ng-click="c.cancelAdd();">Cancel</button>
                     </div>
                 </div>
-                <!--<button ng-click="c.test();">Test</button>-->
             </form>
         </div>
     </div>
-    <div class="row text-center" ng-if="!c.data.delegates.length && !c.addMode">
+    <div class="row text-center" ng-show="!c.data.delegates.length && !c.addMode">
         <div class="col-md-12">
             <p>This user has no delegates yet.</p>
         </div>

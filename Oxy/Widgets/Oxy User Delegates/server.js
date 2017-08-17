@@ -82,7 +82,9 @@
     }
 
     function _getDateFormat(date) {
-        if (!date) return '1901/01/01';
+        if (!date){
+            return '1901/01/01';
+        }
 
         var dateArrInfo = date.split(' ');
         var dateInfo = {

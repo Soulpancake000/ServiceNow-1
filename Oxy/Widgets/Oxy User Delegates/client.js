@@ -16,31 +16,15 @@ function UserDelegatesController($scope, spUtil, $filter, spModal) {
         invitations:false
     };
 
-    c.refDelegateField = {
-        displayValue: "",
-        value: "",
-        name: 'delegate'
-    };
-
-    c.startDateField = {
-        displayValue: "",
-        value: "",
-        name: 'start_date'
-    };
-
-    c.endDateField = {
-        displayValue: "",
-        value: "",
-        name: 'start_date'
-    };
+    c.refDelegateField = {displayValue: "", value: "", name: 'delegate'};
+    c.startDateField   = {displayValue: "", value: "", name: 'start_date'};
+    c.endDateField     = {displayValue: "", value: "", name: 'end_date'};
 
     c.addDelegate = addDelegate;
     c.cancelAdd = cancelAdd;
     c.editDelegate = editDelegate;
     c.removeDelegate = removeDelegate;
     c.setEditMode = setEditMode;
-
-
 
     /* Implementations */
     function setEditMode(delegate) {
@@ -58,6 +42,10 @@ function UserDelegatesController($scope, spUtil, $filter, spModal) {
             notifications: delegate.notifications,
             invitations: delegate.invitations
         };
+        var startDate = new Date(delegate.starts);
+        var endDate = new Date(delegate.ends);
+        c.data.newDelegate.starts = startDate.toLocaleDateString() + ' ' + startDate.toLocaleTimeString();
+        c.data.newDelegate.ends = endDate.toLocaleDateString() + ' ' + endDate.toLocaleTimeString();
     }
 
     function cancelAdd(){
@@ -81,10 +69,6 @@ function UserDelegatesController($scope, spUtil, $filter, spModal) {
             clearForm();
         });
     }
-
-    // c.test = function(){
-    //     c.data.newDelegate.starts = '08/16/2016 4:29 PM';
-    // };
 
     function removeDelegate(delegate) {
         spModal.confirm("${Want to remove this delegate?}")
@@ -114,27 +98,13 @@ function UserDelegatesController($scope, spUtil, $filter, spModal) {
             invitations:false
         };
 
-        c.refDelegateField = {
-            displayValue: "",
-            value: "",
-            name: 'delegate'
-        };
-
-        c.startDateField = {
-            displayValue: "",
-            value: "",
-            name: 'start_date'
-        };
-
-        c.endDateField = {
-            displayValue: "",
-            value: "",
-            name: 'start_date'
-        };
+        c.refDelegateField = {displayValue: "", value: "", name: 'delegate'};
+        c.startDateField   = {displayValue: "", value: "", name: 'start_date'};
+        c.endDateField     = {displayValue: "", value: "", name: 'end_date'};
     }
     c.convertToDate = function (stringDate){
         var dateOut = new Date(stringDate);
-        dateOut.setDate(dateOut.getDate() + 1);
+        dateOut.setDate(dateOut.getDate());
         return dateOut;
     };
 
