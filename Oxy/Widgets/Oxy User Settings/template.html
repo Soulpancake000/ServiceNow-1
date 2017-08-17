@@ -1,0 +1,45 @@
+<div class="user-settings-container">
+    <h4>Portal Settings</h4>
+    <hr>
+    <div class="row">
+        <div class="col-md-12">
+            <form ng-show="c.data.isLoggedInUsersProfile">
+                <div class="form-group">
+                    <label for="communicationPreference">Communication Preference</label>
+                    <sn-record-picker field="c.refFields.communicationPreference" table="'sys_choice'" display-field="'label'" value-field="'value'" default-query="'element=u_communication_preference'" search-fields="'label'" page-size="100"></sn-record-picker>
+                </div>
+                <div class="form-group">
+                    <label for="languageNotifications">Language Notifications</label>
+                    <sn-record-picker field="c.refFields.language" table="'sys_choice'" display-field="'label'" value-field="'value'" default-query="'name=sys_user^element=u_preferred_language'" search-fields="'label'" page-size="100"></sn-record-picker>
+                </div>
+                <div class="form-group">
+                    <label for="timezone">Timezone</label>
+                    <sn-record-picker field="c.refFields.timezone" table="'sys_choice'" display-field="'label'" value-field="'value'" default-query="'name=sys_user^element=time_zone'" search-fields="'label'" page-size="100"></sn-record-picker>
+                </div>
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <sn-record-picker field="c.refFields.location" table="'cmn_location'" display-field="'name'" value-field="'sys_id'" search-fields="'name'" page-size="100" ></sn-record-picker>
+                </div>
+            </form>
+            <div ng-show="!c.data.isLoggedInUsersProfile">
+                <div class="form-group">
+                    <p  ><strong>Communication Preference</strong></p>
+
+                    <p>{{c.refFields.communicationPreference.displayValue}}</p>
+                </div>
+                <div class="form-group">
+                    <p><strong>Language Notifications</strong></p>
+                    <p>{{c.refFields.language.displayValue}}</p>
+                </div>
+                <div class="form-group">
+                    <h5><strong>Timezone</strong></h5>
+                    <p>{{c.refFields.timezone.displayValue}}</p>
+                </div>
+                <div class="form-group">
+                    <h5><strong>Location</strong></h5>
+                    <p>{{c.refFields.location.displayValue}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
