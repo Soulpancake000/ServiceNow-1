@@ -16,8 +16,8 @@
                         <span ng-bind="c.convertToDate(delegate.ends) | date:'MMM-dd-yyyy  h:mma'"></span>
                     </small>
                     <br/>
-                    <a class="btn btn-link" ng-click="removeDelegate(delegate)">${Remove delegates}</a>
-
+                    <a class="btn btn-link" ng-click="c.removeDelegate(delegate)">${Remove}</a>
+                    <a class="btn btn-link" ng-click="c.setEditMode(delegate);">${Edit}</a>
                 </div>
             </div>
         </div>
@@ -31,7 +31,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="end_date">Start Date</label>
+                    <label for="start_date">Start Date</label>
                     <div class='input-group date' datetimepicker  field="c.startDateField" ng-model="c.data.newDelegate.starts">
                         <input type='text' class="form-control" />
                         <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
@@ -53,7 +53,7 @@
                 </div>
                 <div class="checkbox">
                     <label>
-                        <input type="checkbox" ng-model="c.data.newDelegate.assingments"> Assignments
+                        <input type="checkbox" ng-model="c.data.newDelegate.assignments"> Assignments
                     </label>
                 </div>
                 <div class="checkbox">
@@ -63,10 +63,11 @@
                 </div>
                 <div class="form-group">
                     <div class="pull-right">
-                        <button type="submit" class="btn btn-primary" ng-click="c.addDelegate();" ng-disabled="((newDelegateForm.$invalid) || (!c.validDate))">Save</button>
+                        <button type="submit" class="btn btn-primary" ng-click="c.editMode ? c.editDelegate() : c.addDelegate();" ng-disabled="((newDelegateForm.$invalid) || (!c.validDate))">Save</button>
                         <button type="submit" class="btn btn-default" ng-click="c.cancelAdd();">Cancel</button>
                     </div>
                 </div>
+                <!--<button ng-click="c.test();">Test</button>-->
             </form>
         </div>
     </div>

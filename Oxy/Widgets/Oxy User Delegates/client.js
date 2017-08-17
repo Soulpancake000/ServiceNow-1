@@ -2,6 +2,7 @@ function UserDelegatesController($scope, spUtil, $filter, spModal) {
     /* widget controller */
     var c = this;
     c.addMode = false;
+    c.editMode = false;
     c.data.action = null;
 
     // on data for server input read
@@ -35,10 +36,30 @@ function UserDelegatesController($scope, spUtil, $filter, spModal) {
 
     c.addDelegate = addDelegate;
     c.cancelAdd = cancelAdd;
+    c.editDelegate = editDelegate;
+    c.removeDelegate = removeDelegate;
+    c.setEditMode = setEditMode;
 
 
 
     /* Implementations */
+    function setEditMode(delegate) {
+        c.addMode = true;
+        c.editMode = true;
+        c.refDelegateField.displayValue = delegate.delegate;
+        c.refDelegateField.value = delegate.delegate_id;
+        c.data.newDelegate = {
+            sys_id: delegate.sys_id,
+            delegate: delegate.delegate_id,
+            starts: delegate.starts,
+            ends: delegate.ends,
+            approvals: delegate.approvals,
+            assignments: delegate.assignments,
+            notifications: delegate.notifications,
+            invitations: delegate.invitations
+        };
+    }
+
     function cancelAdd(){
         c.addMode = false;
         clearForm();
@@ -46,17 +67,41 @@ function UserDelegatesController($scope, spUtil, $filter, spModal) {
 
     function addDelegate(){
         c.data.action = 'add_delegate';
-        console.log(c.data.newDelegate);
         c.server.update().then(function(){
             spUtil.update($scope);
-
             clearForm();
         });
 
     }
 
+    function editDelegate() {
+        c.data.action = 'edit_delegate';
+        c.server.update().then(function () {
+            spUtil.update($scope);
+            clearForm();
+        });
+    }
+
+    // c.test = function(){
+    //     c.data.newDelegate.starts = '08/16/2016 4:29 PM';
+    // };
+
+    function removeDelegate(delegate) {
+        spModal.confirm("${Want to remove this delegate?}")
+            .then(function () {
+                c.data.action = 'remove_delegate';
+                c.data.removeDelegate = delegate.sys_id;
+                c.server.update().then(function () {
+                    c.data.action = '';
+                    c.data.removeDelegate = null;
+                    spUtil.update($scope);
+                });
+            });
+    }
+
     function clearForm(){
         c.addMode = false;
+        c.editMode = false;
         c.data.action = null;
 
         c.data.newDelegate = {
@@ -118,21 +163,6 @@ function UserDelegatesController($scope, spUtil, $filter, spModal) {
         else
             return 1;
     }
-
-    $scope.removeDelegate = function (delegate) {
-        spModal.confirm("${Want to remove this delegate?}")
-            .then(function () {
-                c.data.action = 'remove_delegate';
-                c.data.removeDelegate = delegate.sys_id;
-                console.log('sending ' + delegate.sys_id);
-                c.server.update().then(function () {
-                    c.data.action = '';
-                    c.data.removeDelegate = null;
-                    //TODO: will this method work?
-                    spUtil.update($scope);
-                });
-            });
-    };
     /* listeners */
 
     $scope.$on("field.change", function(evt, parms) {

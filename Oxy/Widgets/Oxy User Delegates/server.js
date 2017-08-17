@@ -15,7 +15,6 @@
     var grDelegates = new GlideRecord('sys_user_delegate');
     grDelegates.addQuery('user', data.sysUserID);
     grDelegates.orderByDesc("sys_created_on");
-    //grDelegates.setlimit(1);
     grDelegates.chooseWindow(0, 3);
     grDelegates.query();
 
@@ -31,13 +30,17 @@
                 photo:grDelegates.delegate.photo.getDisplayValue()
             },
             starts: grDelegates.starts.getDisplayValue(),
-            ends:  grDelegates.ends.getDisplayValue()
+            ends:  grDelegates.ends.getDisplayValue(),
+            delegate_id: grDelegates.getValue('delegate'),
+            invitations: grDelegates.getValue('invitations') === "1",
+            approvals: grDelegates.getValue('approvals') === "1",
+            assignments: grDelegates.getValue('assignments') === "1",
+            notifications: grDelegates.getValue('notifications') === "1"
         };
         data.delegates.push(delegate);
     }
 
     if (input && input.action) {
-        console.log(input.action);
         switch (input.action) {
             case 'add_delegate':
                 addDelegate(input.newDelegate);
@@ -45,13 +48,15 @@
             case 'remove_delegate':
                 removeDelegate(input.removeDelegate);
                 break;
+            case 'edit_delegate':
+                editDelegate(input.newDelegate);
+                break;
         }
     }
 
     function removeDelegate(delegateId) {
         var grDelegate = new GlideRecord('sys_user_delegate');
         grDelegate.get(delegateId);
-        console.log(input.removeDelegate);
         if (grDelegate.isValidRecord()) {
             grDelegate.deleteRecord();
         }
@@ -68,12 +73,27 @@
         grDelegateAdd.delegate = delegate.delegate;
         grDelegateAdd.starts = new GlideDateTime().setValue((delegate.starts.getDisplayValue()));
         grDelegateAdd.ends = new GlideDateTime().setValue((delegate.ends.getDisplayValue()));
-        //grDelegateAdd.ends = delegate.ends;
         grDelegateAdd.approvals = delegate.approvals;
         grDelegateAdd.assignments = delegate.assignments;
         grDelegateAdd.notifications = delegate.notifications;
         grDelegateAdd.invitations = delegate.invitations;
 
         grDelegateAdd.insert();
+    }
+
+    function editDelegate(delegate){
+        if(delegate === undefined){
+            return false;
+        }
+        var grDelegateEdit = new GlideRecord('sys_user_delegate');
+        grDelegateEdit.get(delegate.sys_id);
+        grDelegateEdit.delegate = delegate.delegate;
+        // grDelegateEdit.starts = new GlideDateTime().setValue((delegate.starts.getDisplayValue()));
+        // grDelegateEdit.ends = new GlideDateTime().setValue((delegate.ends.getDisplayValue()));
+        grDelegateEdit.approvals = delegate.approvals;
+        grDelegateEdit.assignments = delegate.assignments;
+        grDelegateEdit.notifications = delegate.notifications;
+        grDelegateEdit.invitations = delegate.invitations;
+        grDelegateEdit.update();
     }
 })();
