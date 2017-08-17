@@ -71,14 +71,30 @@
         grDelegateAdd.initialize();
         grDelegateAdd.user = data.sysUserID;
         grDelegateAdd.delegate = delegate.delegate;
-        grDelegateAdd.starts = new GlideDateTime().setValue((delegate.starts.getDisplayValue()));
-        grDelegateAdd.ends = new GlideDateTime().setValue((delegate.ends.getDisplayValue()));
+        grDelegateAdd.starts = _getDateFormat(delegate.starts);
+        grDelegateAdd.ends = _getDateFormat(delegate.ends);
         grDelegateAdd.approvals = delegate.approvals;
         grDelegateAdd.assignments = delegate.assignments;
         grDelegateAdd.notifications = delegate.notifications;
         grDelegateAdd.invitations = delegate.invitations;
 
         grDelegateAdd.insert();
+    }
+
+    function _getDateFormat(date) {
+        if (!date) return '1901/01/01';
+
+        var dateArrInfo = date.split(' ');
+        var dateInfo = {
+            time: dateArrInfo[1].split(':'),
+            meridian: dateArrInfo[2],
+            date: dateArrInfo[0].split('/')
+        };
+        dateInfo.time[0] = dateInfo.time[0] === "12" ? "00" : dateInfo.time[0];
+        if (dateInfo.meridian === "PM") {
+            dateInfo.time[0] = parseInt(dateInfo.time[0]) + 12;
+        }
+        return dateInfo.date.join('-') + ' ' + dateInfo.time.join(':');
     }
 
     function editDelegate(delegate){
@@ -88,8 +104,8 @@
         var grDelegateEdit = new GlideRecord('sys_user_delegate');
         grDelegateEdit.get(delegate.sys_id);
         grDelegateEdit.delegate = delegate.delegate;
-        // grDelegateEdit.starts = new GlideDateTime().setValue((delegate.starts.getDisplayValue()));
-        // grDelegateEdit.ends = new GlideDateTime().setValue((delegate.ends.getDisplayValue()));
+        grDelegateEdit.starts = _getDateFormat(delegate.starts);
+        grDelegateEdit.ends = _getDateFormat(delegate.ends);
         grDelegateEdit.approvals = delegate.approvals;
         grDelegateEdit.assignments = delegate.assignments;
         grDelegateEdit.notifications = delegate.notifications;
