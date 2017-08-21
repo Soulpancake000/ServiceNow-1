@@ -1,5 +1,13 @@
 @import "compass/css3";
 
+.badge-danger {
+  background-color: #d9534f;
+}
+
+.badge-disabled {
+  background-color: #676767;
+}
+
 @mixin gray-stripe {
   background-size: 35px 35px;
   background-color: #EcEcEc;
@@ -88,6 +96,15 @@ ul.checkout-bar {
         background: #8bc53f;
         z-index: 999;
         content: "\f00c";
+      }
+    }
+    &.onHold {
+      color: #C53F3F;
+      font-weight: bold;
+      &:before {
+        background: #C53F3F;
+        z-index: 999;
+        content: "\f04c";
       }
     }
     &.visited {
@@ -192,7 +209,7 @@ ul.checkout-bar {
       padding: 3px 10px;
     }
     .divTableRow:hover {
-      background-color: rgba(87, 174, 209, 0.11);
+      background-color: rgba(87, 174, 209, 0.10);
     }
     .divTableRowOdd {
       background-color: #FFFFFF;

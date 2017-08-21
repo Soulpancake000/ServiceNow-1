@@ -1,7 +1,22 @@
 <div class="gp_wrapper">
     <div class="row sorting">
-        <label>Sort By:</label>
+        <!--<label>Sort By:</label>
         <select ng-model="c.data.order_by" ng-change="c.sortProjects()" ng-options="sortingField.label for sortingField in c.data.sorting_fields track by sortingField.value">
+        </select>-->
+        <label>Team member:</label>
+        <select ng-model="c.tManagerSelected" ng-change="c.FilterBy()" ng-options="tManager.name for tManager in c.data.InspireProjects track by tManager.sys_id">
+        </select>
+        <label>Geo Location:</label>
+        <select ng-model="c.geoLocationSelected" ng-change="c.FilterBy()" ng-options="geoLocation for geoLocation in c.data.GeoLocations track by geoLocation">
+        </select>
+        <label>Engagement Type:</label>
+        <select ng-model="c.EngagemenTypeSelected" ng-change="c.FilterBy()" ng-options="enga for enga in c.EngagemenTypeValues track by enga">
+        </select>
+        <label>State:</label>
+        <select ng-model="c.StateSelected" ng-change="c.FilterBy()" ng-options="stat for stat in c.StateValues track by stat">
+        </select>
+        <label>Show:</label>
+        <select ng-model="c.onHoldOptionSelected" ng-change="c.FilterBy()" ng-options="holdOption for holdOption in c.onHoldOptions track by holdOption">
         </select>
         <!--<button class="btn" ng-model="c.data.sortDirection" ng-click="(c.data.sortDirection=c.data.sortDirection==='Desc'?'Asc':'Desc') && c.updateData('get')">{{data.sortDirection}}</button>-->
     </div>
@@ -15,11 +30,23 @@
                     <span ng-if="state.value.value === c.filter_state.value.value" class="alert-danger fa fa-times"></span> {{state.label.display_value}}
                 </div>
             </div>
-            <div class="row divTableRow" ng-if="!c.updatingData" ng-repeat="project in c.data.projects track by $index" ng-class="{divTableRowOdd:$odd, divTableEvenRow:$even}">
+            <div class="row divTableRow" ng-if="!c.updatingData" ng-repeat="project in c.data.projects track by $index" ng-class="{divTableRowOdd:$odd, divTableEvenRow:$even}"
+                 title="Status : {{project.senior_mgmt_update}}  Updated: {{project.updateDate}} Phase: {{project.phase.display_value}}">
                 <a href="inspire?id=form&table={{project.table}}&sys_id={{project.sys_id.display_value}}">
                     <div class="col-sm-2 divTableCell">
-                        <div>{{project.number.display_value}}</div>
-                        <div class="text-muted">{{project.short_description.display_value}}</div>
+                        <div>{{project.inspire_account.display_value}}</div>
+                        <div ng-show="project.project_type.value != 'tsp1'">
+
+                            <div class="text-muted">{{project.assigned_to.display_value}}</div>
+                        </div>
+                        <div ng-show="project.project_type.value == 'tsp1'">
+
+                            <div class="text-muted">{{project.short_description.display_value}}</div>
+                            <div class="text-muted">{{project.engagement_type.display_value}}</div>
+                            <div class="text-muted">{{project.project_manager.display_value}}</div>
+                            <div class="text-muted">{{project.general_state.display_value}}</div>
+                        </div>
+
                     </div>
                     <div class="divTableCell" ng-class="c.progressBarClass()">
                         <div class="checkout-wrap">
@@ -28,6 +55,7 @@
                             </ul>
                         </div>
                     </div>
+
                 </a>
             </div>
         </div>
@@ -36,18 +64,19 @@
             <div class="row divTableRow" ng-if="!c.updatingData" ng-repeat="project in c.data.projects track by $index" ng-class="{divTableRowOdd:$odd, divTableEvenRow:$even}">
                 <a href="inspire?id=form&table={{project.table}}&sys_id={{project.sys_id.display_value}}">
                     <div class="row col-sm-2 divTableCell info">
-                        <div class="col-sm-1"><strong>{{project.number.display_value}}</strong></div>
-                        <div class="col-sm-1">{{project.short_description.display_value}}</div>
+                        <div class="col-sm-1"><strong>{{project.inspire_account.display_value}}</strong></div>
+                        <div class="col-sm-1">{{project.short_description.display_value}} - {{project.engagement_type.display_value}} {{project.project_manager.display_value}}</div>
                     </div>
                     <div class="col-sm-2 divTableCell">
-                        <uib-progressbar animate="false" value="c.getProjectAdvancePercentage(project)" type="success">
+                        <uib-progressbar animate="false" value="c.getProjectAdvancePercentage(project)" type="{{project.on_hold.value == '1' ? 'danger' : 'success'}}">
                             <b>{{project.state.display_value}}</b>
                         </uib-progressbar>
                     </div>
                 </a>
             </div>
         </div>
-        <div class="row divTableRow" ng-if="!c.updatingData">
+
+        <div class="row divTableRow" ng-if="!c.updatingData" ng-show="c.data.pagination.total_items >= c.data.pagination.items_in_pages">
             <ul uib-pagination direction-links="false" boundary-links="true" force-ellipses="true" total-items="c.data.pagination.total_items" items-per-page="c.data.pagination.items_in_pages"
                 ng-model="c.data.pagination.current_page" max-size="c.data.pagination.max_size" ng-change="c.pageChanged()"></ul>
         </div>
