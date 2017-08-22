@@ -1,8 +1,5 @@
 <div class="gp_wrapper">
     <div class="row sorting">
-        <!--<label>Sort By:</label>
-        <select ng-model="c.data.order_by" ng-change="c.sortProjects()" ng-options="sortingField.label for sortingField in c.data.sorting_fields track by sortingField.value">
-        </select>-->
         <label>Team member:</label>
         <select ng-model="c.tManagerSelected" ng-change="c.FilterBy()" ng-options="tManager.name for tManager in c.data.InspireProjects track by tManager.sys_id">
         </select>
@@ -36,11 +33,9 @@
                     <div class="col-sm-2 divTableCell">
                         <div>{{project.inspire_account.display_value}}</div>
                         <div ng-show="project.project_type.value != 'tsp1'">
-
                             <div class="text-muted">{{project.assigned_to.display_value}}</div>
                         </div>
                         <div ng-show="project.project_type.value == 'tsp1'">
-
                             <div class="text-muted">{{project.short_description.display_value}}</div>
                             <div class="text-muted">{{project.engagement_type.display_value}}</div>
                             <div class="text-muted">{{project.project_manager.display_value}}</div>

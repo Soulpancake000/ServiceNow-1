@@ -64,7 +64,7 @@ function projectVizClient(spUtil, $scope, $filter) {
                 c.data.pagination = response.data.pagination;
                 c.data.InspireProjects = response.data.InspireProjects;
             });
-    }
+    };
     c.setFilter = function (state) {
         c.filter_state = c.filter_state && state.value.value === c.filter_state.value.value ? undefined : state;
         c.data.pagination.current_page = 1;
@@ -80,7 +80,7 @@ function projectVizClient(spUtil, $scope, $filter) {
     };
     c.FilterBy = function () {
         c.updateData('get');
-    }
+    };
     window.onresize = function (event) {
         if (c.showProgressBar() !== c.windowWidthStatus) {
             c.windowWidthStatus = c.showProgressBar();
