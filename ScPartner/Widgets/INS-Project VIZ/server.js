@@ -133,6 +133,10 @@
     data.EngagementTypeSelected = fEngagementType;
     data.StateSelected = fState;
     data.excludeProjects = projectSysIds;
+    data.TeamManagers = getTeamManagers();
+    data.GeoLocations = getGeoLocationInfo();
+    data.InspireAccounts = getInspireAccounts();
+    data.InspireProjects = getInspireProjects();
 
     /**
      * Fetch second batch
@@ -319,7 +323,6 @@
         return res;
     }
 
-    data.InspireProjects = getInspireProjects();
     function getInspireAccounts() {
         var answer = [];
         var mem = new GlideRecord('x_snc_ion_inspire_account');
@@ -330,7 +333,6 @@
         return answer;
     }
 
-    data.InspireAccounts = getInspireAccounts();
     function getGeoLocationInfo() {
         var answer = [];
         var mem = new GlideRecord('sales_territory');
@@ -354,7 +356,6 @@
         return resut;
     }
 
-    data.GeoLocations = getGeoLocationInfo();
     function getTeamManagers() {
         var answer = [];
         var mem = new GlideRecord('sys_user_grmember');
@@ -367,8 +368,6 @@
         }
         return answer;
     }
-
-    data.TeamManagers = getTeamManagers();
 
     //Filters
     function filterByParameters(gr) {
