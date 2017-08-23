@@ -56,7 +56,6 @@ function projectVizClient(spUtil, $scope, $filter) {
             EngagemenTypeSelected: c.EngagemenTypeSelected,
             StateSelected: c.StateSelected
         }).then(function (response) {
-            console.log('response', response);
             c.filter_state = response.data.filter_state;
             c.data.projects = response.data.projects;
             c.data.GeoLocations = response.data.GeoLocations;

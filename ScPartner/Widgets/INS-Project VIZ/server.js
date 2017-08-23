@@ -117,8 +117,11 @@
     var fEngagementType;
     var fState;
     var fOnHold;
+    var projectSysIds = {tsp1: []};
 
     serviceDispatch();
+    console.log('ProjectSysIds.tsp1');
+    console.log(projectSysIds.tsp1);
 
     data.projects = getIonTsp1Projects();
     data.states = states;
@@ -132,19 +135,52 @@
     data.geoLocationSelected = fGeoLocation;
     data.EngagementTypeSelected = fEngagementType;
     data.StateSelected = fState;
+    data.excludeProjects = projectSysIds.tsp1;
+
 
     //Functions to Records
     function getIonTsp1Projects() {
         var gr = new GlideRecord('x_snc_ion_nom_to_tsp1');
-        gr.addEncodedQuery('nom_type!=bva');
-        //@TEST gr.addEncodedQuery('ORDERBYnom_inspire_account^ORDERBYtsp1_u_inspire_account');
-        gr.addEncodedQuery('ORDERBYDESC' + 'tsp1_' + OrderBy.value + '^ORDERBYDESC' + 'nom_' + OrderBy.value);
         filterByParameters(gr);
         setPagination(gr);
-        console.log(gr.getEncodedQuery());
         gr.query();
 
-        return getObjsFromQuery(gr);
+        var projects = getObjsFromQuery(gr);
+        console.log('ProjectSysIds.tsp1 getObjsFromQuery');
+        console.log(projectSysIds.tsp1);
+
+        //IF the filter of Team Member is set:
+        //THEN get all projects which assigned_to and project_manager is that team member (which is done in filterByParameters)
+        //THEN get all projects that haven't been fetched and resource is team member
+        if (fTeamMember) {
+            var gIonTspResRecord = new GlideRecord('u_ion_widget');
+            gIonTspResRecord.addEncodedQuery(
+                'tsp1_sys_id!=' + projectSysIds.tsp1.join('^tsp1_sys_id!=')
+                + '^nom_assigned_to=' + fTeamMember.sys_id
+                + '^ORtsp1_project_manager=' + fTeamMember.sys_id
+                + '^ORres_user=' + fTeamMember.sys_id
+            );
+            fTeamMember = null; //resetting fTeam member since we already added it
+            filterByParameters(gIonTspResRecord);
+            gIonTspResRecord.query();
+            var rowCount = gIonTspResRecord.getRowCount();
+            //  AND IF the last page of x_snc_ion_nom_to_tsp1 THEN fetch u_ion_widget
+            if (Pagination.current_page * Pagination.items_in_pages > Pagination.total_items) {
+                while (gIonTspResRecord.next()) {
+                    var gRecord = $sp.getFieldsObject(gIonTspResRecord, projectAttributes.join(','));
+                    console.log('fetching');
+                    console.log(gRecord.tsp1_sys_id);
+                    projectSysIds.tsp1.push(gRecord.tsp1_sys_id);
+                    projects.push(castProject(gRecord));
+                }
+                console.log('ProjectSysIds.tsp1 fetching');
+                console.log(projectSysIds.tsp1);
+            }
+            // update the pagination with the new projects from u_ion_widget table
+            Pagination.total_items += rowCount;
+        }
+
+        return projects;
     }
 
     function setPagination(gr) {
@@ -159,6 +195,9 @@
         var projects = [];
         while (gr.next()) {
             var grRecord = $sp.getFieldsObject(gr, projectAttributes.join(','));
+            if (fTeamMember && grRecord.tsp1_sys_id.value) {
+                projectSysIds.tsp1.push(grRecord.tsp1_sys_id.value);
+            }
             var project = castProject(grRecord);
             projects.push(project);
         }
@@ -243,6 +282,12 @@
                 fGeoLocation = input.geoLocationSelected;
                 fEngagementType = input.EngagemenTypeSelected;
                 fState = input.StateSelected;
+                console.log('Service Dispatch: exclude projects');
+                console.log(input.excludeProjects);
+                input.excludeProjects.forEach(function (sysId) {
+                    projectSysIds.tsp1.push(sysId);
+                });
+                console.log(input.excludeProjects);
             }
         }
     }
@@ -334,11 +379,13 @@
 
     //Filters
     function filterByParameters(gr) {
+        gr.addEncodedQuery('nom_type!=bva');
+        gr.addEncodedQuery('ORDERBYnom_inspire_account^ORDERBYtsp1_u_inspire_account');
         if (fOnHold && fOnHold !== 'All') {
             gr.addQuery('nom_u_on_hold', fOnHold === 'On Hold');
         }
         if (fTeamMember && fTeamMember.name !== 'None') {
-            gr.addEncodedQuery('nom_assigned_to=' + fTeamMember.sys_id + '^ORres_user=' + fTeamMember.sys_id);
+            gr.addEncodedQuery('nom_assigned_to=' + fTeamMember.sys_id + '^ORtsp1_project_manager=' + fTeamMember.sys_id);
         }
         if (fGeoLocation && fGeoLocation !== 'None') {
             gr.addEncodedQuery(fGeoLocation === 'No Region' ? 'nom_inspire_account.regionISEMPTY' : 'nom_inspire_account.region.geo.name=' + fGeoLocation);
@@ -353,8 +400,16 @@
 
     function filterState(gr) {
         var query = null;
-        var defaultNomStates = states.filter(function (state) { return (state.type.value.indexOf('nom') > -1); }).map(function (state) { return state.label.value; }).join(',');
-        var defaultTspPhases = states.filter(function (state) { return (state.type.value.indexOf('tsp1') > -1); }).map(function (state) { return state.label.value; }).join(',');
+        var defaultNomStates = states.filter(function (state) {
+            return (state.type.value.indexOf('nom') > -1);
+        }).map(function (state) {
+            return state.label.value;
+        }).join(',');
+        var defaultTspPhases = states.filter(function (state) {
+            return (state.type.value.indexOf('tsp1') > -1);
+        }).map(function (state) {
+            return state.label.value;
+        }).join(',');
         if (fState === 'In Qualification') {
             //In Qualification – (x_snc_ion_nomination, state = New, Internal or External Qualification).
             query = 'nom_stateIN1,2,3';
