@@ -120,8 +120,6 @@
     var projectSysIds = {tsp1: []};
 
     serviceDispatch();
-    console.log('ProjectSysIds.tsp1');
-    console.log(projectSysIds.tsp1);
 
     data.projects = getIonTsp1Projects();
     data.states = states;
@@ -146,8 +144,6 @@
         gr.query();
 
         var projects = getObjsFromQuery(gr);
-        console.log('ProjectSysIds.tsp1 getObjsFromQuery');
-        console.log(projectSysIds.tsp1);
 
         //IF the filter of Team Member is set:
         //THEN get all projects which assigned_to and project_manager is that team member (which is done in filterByParameters)
@@ -168,13 +164,9 @@
             if (Pagination.current_page * Pagination.items_in_pages > Pagination.total_items) {
                 while (gIonTspResRecord.next()) {
                     var gRecord = $sp.getFieldsObject(gIonTspResRecord, projectAttributes.join(','));
-                    console.log('fetching');
-                    console.log(gRecord.tsp1_sys_id);
                     projectSysIds.tsp1.push(gRecord.tsp1_sys_id);
                     projects.push(castProject(gRecord));
                 }
-                console.log('ProjectSysIds.tsp1 fetching');
-                console.log(projectSysIds.tsp1);
             }
             // update the pagination with the new projects from u_ion_widget table
             Pagination.total_items += rowCount;
@@ -282,12 +274,9 @@
                 fGeoLocation = input.geoLocationSelected;
                 fEngagementType = input.EngagemenTypeSelected;
                 fState = input.StateSelected;
-                console.log('Service Dispatch: exclude projects');
-                console.log(input.excludeProjects);
                 input.excludeProjects.forEach(function (sysId) {
                     projectSysIds.tsp1.push(sysId);
                 });
-                console.log(input.excludeProjects);
             }
         }
     }
