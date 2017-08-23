@@ -6,7 +6,7 @@ function projectVizClient(spUtil, $scope, $filter) {
     c.geoLocationSelected = 'None';
     c.onHoldOptions = ['All', 'On Hold', 'Non Hold'];
     c.onHoldOptionSelected = 'All';
-    c.EngagemenTypeValues = ['None', 'Innovation', 'Journey', 'Simulation', 'Transformation', 'Other'];
+    c.EngagemenTypeValues = ['None', 'Innovation', 'Journey', 'Simulation', 'Transformation', 'Empty', 'Other'];
     c.EngagemenTypeSelected = 'None';
     c.StateValues = ['None', 'In Qualification', 'Pending Launch', 'Active', 'Completed'];
     c.StateSelected = 'None';
@@ -55,19 +55,17 @@ function projectVizClient(spUtil, $scope, $filter) {
             geoLocationSelected: c.geoLocationSelected,
             EngagemenTypeSelected: c.EngagemenTypeSelected,
             StateSelected: c.StateSelected
-        })
-            .then(function (response) {
-                console.log("entro a promesa con : ", response)
-                c.filter_state = response.data.filter_state;
-                c.data.projects = response.data.projects;
-                c.data.GeoLocations = response.data.GeoLocations;
-                c.data.pagination = response.data.pagination;
-                c.data.InspireProjects = response.data.InspireProjects;
-            });
+        }).then(function (response) {
+            console.log('response', response);
+            c.filter_state = response.data.filter_state;
+            c.data.projects = response.data.projects;
+            c.data.GeoLocations = response.data.GeoLocations;
+            c.data.pagination = response.data.pagination;
+            c.data.InspireProjects = response.data.InspireProjects;
+        });
     };
     c.setFilter = function (state) {
         c.filter_state = c.filter_state && state.value.value === c.filter_state.value.value ? undefined : state;
-        c.data.pagination.current_page = 1;
         c.updateData('get');
     };
     c.sortProjects = function () {
@@ -75,10 +73,10 @@ function projectVizClient(spUtil, $scope, $filter) {
         c.updateData('get');
     };
     c.pageChanged = function () {
-
         c.updateData('get');
     };
     c.FilterBy = function () {
+        c.data.pagination.current_page = 1;
         c.updateData('get');
     };
     window.onresize = function (event) {
@@ -87,14 +85,7 @@ function projectVizClient(spUtil, $scope, $filter) {
             $scope.$apply();
         }
     };
-    c.getProjectAdvancePercentage = function (project) {
-
-        return parseInt(project.state.value / c.data.states.length * 100);
-    };
-    c.showProgressBar = function () {
-
-        return window.innerWidth <= 800;
-    };
+    c.getProjectAdvancePercentage = function (project) { return parseInt(project.state.value / c.data.states.length * 100); };
+    c.showProgressBar = function () { return window.innerWidth <= 800; };
     c.windowWidthStatus = c.showProgressBar();
-    c.updateData('get');
 }

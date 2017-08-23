@@ -117,11 +117,10 @@
     var fEngagementType;
     var fState;
     var fOnHold;
-    //Service Dispatch
+
     serviceDispatch();
-    var projects = getIonTsp1Projects();
-    //Assign values to 'data'
-    data.projects = projects;
+
+    data.projects = getIonTsp1Projects();
     data.states = states;
     data.sorting_fields = sortingFields;
     data.order_by = OrderBy;
@@ -133,14 +132,16 @@
     data.geoLocationSelected = fGeoLocation;
     data.EngagementTypeSelected = fEngagementType;
     data.StateSelected = fState;
+
     //Functions to Records
     function getIonTsp1Projects() {
-        var gr = new GlideRecord('u_ion_widget');
+        var gr = new GlideRecord('x_snc_ion_nom_to_tsp1');
         gr.addEncodedQuery('nom_type!=bva');
-        // @TEST gr.addEncodedQuery('ORDERBYnom_inspire_account^ORDERBYtsp1_u_inspire_account');
+        //@TEST gr.addEncodedQuery('ORDERBYnom_inspire_account^ORDERBYtsp1_u_inspire_account');
         gr.addEncodedQuery('ORDERBYDESC' + 'tsp1_' + OrderBy.value + '^ORDERBYDESC' + 'nom_' + OrderBy.value);
-        gr = filterByParameters(gr);
-        gr = setPagination(gr);
+        filterByParameters(gr);
+        setPagination(gr);
+        console.log(gr.getEncodedQuery());
         gr.query();
 
         return getObjsFromQuery(gr);
@@ -152,12 +153,6 @@
         var start = (Pagination.current_page - 1) * Pagination.items_in_pages,
             end = (Pagination.current_page) * Pagination.items_in_pages;
         gr.chooseWindow(start, end);
-
-        return gr;
-    }
-
-    function setPaginationAfterQuery(projects) {
-        Pagination.total_items = projects.length;
     }
 
     function getObjsFromQuery(gr) {
@@ -165,16 +160,8 @@
         while (gr.next()) {
             var grRecord = $sp.getFieldsObject(gr, projectAttributes.join(','));
             var project = castProject(grRecord);
-            project.entroGeolOcationIfCon = fGeoLocation + '- -' + isNaN(project.geo).toString();
-            if (fGeoLocation != 'None') {
-                if (project.geo == fGeoLocation)
-                    projects.push(project);
-            } else {
-                projects.push(project);
-            }
+            projects.push(project);
         }
-        if (fGeoLocation != 'None')
-            setPaginationAfterQuery(projects);
 
         return projects;
     }
@@ -198,7 +185,7 @@
         if (isTsp(grRecord)) {
             project.phase = grRecord.tsp1_phase;
             project.state = mapTspStateFromPhase(project.phase);
-            project.engagement_type = grRecord.tsp1_u_engagement_type;
+            project.engagement_type = grRecord.nom_engagement_type;
             project.inspire_account = grRecord.tsp1_u_inspire_account;
             project.assigned_to = grRecord.tsp1_assigned_to;
             project.table = 'tsp1_project';
@@ -216,7 +203,6 @@
     }
 
     function isTsp(grRecord) {
-
         return grRecord.tsp1_number.value !== null;
     }
 
@@ -255,10 +241,8 @@
                 fOnHold = input.onHoldOptionSelected;
                 fTeamMember = input.tManagerSelected;
                 fGeoLocation = input.geoLocationSelected;
-
                 fEngagementType = input.EngagemenTypeSelected;
                 fState = input.StateSelected;
-
             }
         }
     }
@@ -347,102 +331,50 @@
     }
 
     data.TeamManagers = getTeamManagers();
+
     //Filters
-    function filterByHeaderStates(gr) {
-        var query = null;
-        if (FilterByState !== undefined) {
-            query = FilterByState.type.value + '=' + FilterByState.label.value;
-        } else {
-            var nom_states = states.filter(function (state) {
-                return (state.type.value.indexOf('nom') > -1);
-            }).map(function (state) {
-                return state.label.value;
-            });
-            var tsp1_phases = states.filter(function (state) {
-                return (state.type.value.indexOf('tsp1') > -1);
-            }).map(function (state) {
-                return state.label.value;
-            });
-            query = 'nom_state=' + nom_states.join('^ORnom_state=') + '^ORtsp1_phase=' + tsp1_phases.join('^ORtsp1_phase=');
-        }
-        gr.addEncodedQuery(query);
-    }
-
     function filterByParameters(gr) {
-        if (fOnHold !== 'All') {
-            filterOnHold(gr);
+        if (fOnHold && fOnHold !== 'All') {
+            gr.addQuery('nom_u_on_hold', fOnHold === 'On Hold');
         }
-        if (fTeamMember.name !== 'None') {
-            filterManager(gr);
+        if (fTeamMember && fTeamMember.name !== 'None') {
+            gr.addEncodedQuery('nom_assigned_to=' + fTeamMember.sys_id + '^ORres_user=' + fTeamMember.sys_id);
         }
-        if (fGeoLocation !== 'None') {
-            filterGeo(gr);
+        if (fGeoLocation && fGeoLocation !== 'None') {
+            gr.addEncodedQuery(fGeoLocation === 'No Region' ? 'nom_inspire_account.regionISEMPTY' : 'nom_inspire_account.region.geo.name=' + fGeoLocation);
         }
-        if (fEngagementType !== 'None') {
-            filterEngagementType(gr);
-        }
-        if (fState !== 'None') {
-            filterState(gr);
-        } else {
-            filterByHeaderStates(gr);
-        }
-
-        return gr;
-    }
-
-    function filterManager(gr) {
-        gr.addEncodedQuery('nom_assigned_to=' + fTeamMember.sys_id + '^ORres_user=' + fTeamMember.sys_id);
-    }
-
-    function filterGeo(gr) {
-        if (fGeoLocation != 'No Region') {
-            gr.addNotNullQuery('nom_inspire_account');
-            gr.addNotNullQuery('nom_inspire_account.region');
-            gr.addNotNullQuery('nom_inspire_account.region.geo')
-                .addCondition('nom_inspire_account.region.geo.name', '=', fGeoLocation);
-        }
-    }
-
-    function filterProjectsGeo(ProjectsArray) {
-        var projResult = [];
-        for (var i = 0; i < ProjectsArray; i++) {
-            if (ProjectsArray[i].geo === fGeoLocation) {
-                ProjectsArray[i].comparoGeo = ProjectsArray[i].geo + ' --- ' + fGeoLocation;
-                projResult.push(ProjectsArray[i]);
+        if (fEngagementType && fEngagementType !== 'None') {
+            if (fEngagementType && fEngagementType !== 'All') {
+                gr.addEncodedQuery(fEngagementType === 'Empty' ? 'tsp1_u_engagement_typeISEMPTY' : 'tsp1_u_engagement_type=' + fEngagementType);
             }
         }
-        return projResult;
-    }
-
-    function filterOnHold(gr) {
-        if (fOnHold == 'On Hold')
-            gr.addQuery('nom_u_on_hold', 'true');
-        if (fOnHold == 'Non Hold')
-            gr.addQuery('nom_u_on_hold', 'false');
-    }
-
-    function filterEngagementType(gr) {
-        if (fEngagementType != 'Other') {
-            gr.addQuery('tsp1_u_engagement_type', fEngagementType);
-        }
-        else {
-            gr.addEncodedQuery('nom_engagement_typeNOT INInnovation,Journey,Simulation,Transformation');
-        }
+        filterState(gr);
     }
 
     function filterState(gr) {
+        var query = null;
+        var defaultNomStates = states.filter(function (state) { return (state.type.value.indexOf('nom') > -1); }).map(function (state) { return state.label.value; }).join(',');
+        var defaultTspPhases = states.filter(function (state) { return (state.type.value.indexOf('tsp1') > -1); }).map(function (state) { return state.label.value; }).join(',');
         if (fState === 'In Qualification') {
             //In Qualification – (x_snc_ion_nomination, state = New, Internal or External Qualification).
-            gr.addEncodedQuery('nom_stateIN1,2,3');
+            query = 'nom_stateIN1,2,3';
         } else if (fState === 'Pending Launch') {
             //x_snc_ion_nomination.state = Accepted AND NO project (tsp1_project) exists OR project state is “Open” or “Pending”.
-            gr.addEncodedQuery('nom_state=4^tsp1_stateISEMPTY^ORtsp1_stateIN-5,1');
+            query = 'tsp1_phaseIN' + defaultTspPhases + '^nom_state=4^tsp1_stateISEMPTY^ORtsp1_stateIN-5,1';
         } else if (fState === 'Active') {
             //Active = TSP_1 state = “Work in Progress”
-            gr.addEncodedQuery('tsp1_state=2');
+            query = 'tsp1_phaseIN' + defaultTspPhases + '^tsp1_state=2';
         } else if (fState === 'Completed') {
             //Completed TSP_1 State = Closed Complete
-            gr.addEncodedQuery('tsp1_state=3');
+            query = 'tsp1_phaseIN' + defaultTspPhases + '^tsp1_state=3';
+        } else {
+            //Default all tsp1 phases and nom states
+            query = 'tsp1_phaseIN' + defaultTspPhases + '^ORnom_stateIN' + defaultNomStates;
         }
+
+        if (FilterByState) {
+            query += '^' + FilterByState.type.value + '=' + FilterByState.label.value;
+        }
+        gr.addEncodedQuery(query);
     }
 })();
