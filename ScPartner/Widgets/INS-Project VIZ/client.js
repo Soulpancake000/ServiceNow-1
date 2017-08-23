@@ -22,12 +22,14 @@ function projectVizClient(spUtil, $scope, $filter) {
             previous: row.state.value.value === (project.state.value - 1)
         };
 
-        if (cl.active && project.on_hold.value == '1') {
+        if (cl.active && project.on_hold.value === '1') {
             cl.fa = true;
             cl.onHold = cl.active;
             cl['fa-pause'] = cl.active;
-        }
-        else {
+        } else if (cl.active && project.table === 'x_snc_ion_nomination' && project.state.value === '4') {
+            cl.fa = true;
+            cl.warning = true;
+        } else {
             cl.fa = cl.active;
             cl['fa-check'] = cl.active;
         }

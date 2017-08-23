@@ -407,7 +407,7 @@
             query = 'nom_stateIN1,2,3';
         } else if (fState === 'Pending Launch') {
             //x_snc_ion_nomination.state = Accepted AND NO project (tsp1_project) exists OR project state is “Open” or “Pending”.
-            query = 'tsp1_phaseIN' + defaultTspPhases + '^nom_state=4^tsp1_stateISEMPTY^ORtsp1_stateIN-5,1';
+            query = 'nom_state=4^tsp1_stateISEMPTY^ORtsp1_stateIN-5,1';
         } else if (fState === 'Active') {
             //Active = TSP_1 state = “Work in Progress”
             query = 'tsp1_phaseIN' + defaultTspPhases + '^tsp1_state=2';

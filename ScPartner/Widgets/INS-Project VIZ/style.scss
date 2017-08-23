@@ -107,6 +107,15 @@ ul.checkout-bar {
         content: "\f04c";
       }
     }
+    &.warning {
+      color: #C53F3F;
+      font-weight: bold;
+      &:before {
+        background: #ffcc00;
+        z-index: 999;
+        content: "\f12a";
+      }
+    }
     &.visited {
       background: #ECECEC;
       color: #57aed1;
