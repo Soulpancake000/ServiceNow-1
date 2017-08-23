@@ -54,13 +54,15 @@ function projectVizClient(spUtil, $scope, $filter) {
             tManagerSelected: c.tManagerSelected,
             geoLocationSelected: c.geoLocationSelected,
             EngagemenTypeSelected: c.EngagemenTypeSelected,
-            StateSelected: c.StateSelected
+            StateSelected: c.StateSelected,
+            excludeProjects: c.data.excludeProjects
         }).then(function (response) {
             c.filter_state = response.data.filter_state;
             c.data.projects = response.data.projects;
             c.data.GeoLocations = response.data.GeoLocations;
             c.data.pagination = response.data.pagination;
             c.data.InspireProjects = response.data.InspireProjects;
+            c.data.excludeProjects = response.data.excludeProjects;
         });
     };
     c.setFilter = function (state) {

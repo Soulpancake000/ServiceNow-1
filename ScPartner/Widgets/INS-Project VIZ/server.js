@@ -117,13 +117,10 @@
     var fEngagementType;
     var fState;
     var fOnHold;
-    var projectSysIds = {tsp1: []};
+    var projectSysIds = {tsp1: [], nom: []};
 
     serviceDispatch();
-    console.log('ProjectSysIds.tsp1');
-    console.log(projectSysIds.tsp1);
-
-    data.projects = getIonTsp1Projects();
+    data.projects = fTeamMember && fTeamMember.name !== 'None' ? getIonTsp1ProjectsFilterByTeam() : getIonTsp1Projects();
     data.states = states;
     data.sorting_fields = sortingFields;
     data.order_by = OrderBy;
@@ -135,52 +132,57 @@
     data.geoLocationSelected = fGeoLocation;
     data.EngagementTypeSelected = fEngagementType;
     data.StateSelected = fState;
-    data.excludeProjects = projectSysIds.tsp1;
+    data.excludeProjects = projectSysIds;
 
+    /**
+     * Fetch second batch
+     * IF the filter of Team Member is set:
+     * THEN get all projects which assigned_to and project_manager is that team member (which is done in filterByParameters)
+     * THEN get all projects that haven't been fetched and resource is team member
+     * @returns {Array.<*>}
+     */
+    function getIonTsp1ProjectsFilterByTeam() {
+        /** fetch first batch of projects */
+        var projects = [];
+        var gIonTsp1Record = new GlideRecord('x_snc_ion_nom_to_tsp1');
+        filterByParameters(gIonTsp1Record);
+
+        gIonTsp1Record.query();
+        while (gIonTsp1Record.next()) {
+            var grRecord = $sp.getFieldsObject(gIonTsp1Record, projectAttributes.join(','));
+            if (grRecord.tsp1_sys_id.value) {
+                projectSysIds.tsp1.push(grRecord.tsp1_sys_id.value);
+            }
+            projects.push(castProject(grRecord));
+        }
+
+
+        /** fetch projects that haven't been fetched and resource is team member*/
+        var queryIonTspRes = projectSysIds.tsp1.length ? 'tsp1_sys_id!=' + projectSysIds.tsp1.join('^tsp1_sys_id!=') + '^' : '';
+        queryIonTspRes += 'nom_assigned_to=' + fTeamMember.sys_id + '^ORtsp1_project_manager=' + fTeamMember.sys_id + '^ORres_user=' + fTeamMember.sys_id;
+
+        var gIonTspResRecord = new GlideRecord('u_ion_widget');
+        gIonTspResRecord.addEncodedQuery(queryIonTspRes);
+        fTeamMember = null; //resetting fTeam member since we already added it
+        filterByParameters(gIonTspResRecord);
+        gIonTspResRecord.query();
+        while (gIonTspResRecord.next()) {
+            var gRecord = $sp.getFieldsObject(gIonTspResRecord, projectAttributes.join(','));
+            projects.push(castProject(gRecord));
+        }
+
+        Pagination.total_items = projects.length;
+
+        return projects.slice((Pagination.current_page - 1) * Pagination.items_in_pages, Pagination.current_page * Pagination.items_in_pages);
+    }
 
     //Functions to Records
     function getIonTsp1Projects() {
         var gr = new GlideRecord('x_snc_ion_nom_to_tsp1');
         filterByParameters(gr);
         setPagination(gr);
-        gr.query();
 
-        var projects = getObjsFromQuery(gr);
-        console.log('ProjectSysIds.tsp1 getObjsFromQuery');
-        console.log(projectSysIds.tsp1);
-
-        //IF the filter of Team Member is set:
-        //THEN get all projects which assigned_to and project_manager is that team member (which is done in filterByParameters)
-        //THEN get all projects that haven't been fetched and resource is team member
-        if (fTeamMember) {
-            var gIonTspResRecord = new GlideRecord('u_ion_widget');
-            gIonTspResRecord.addEncodedQuery(
-                'tsp1_sys_id!=' + projectSysIds.tsp1.join('^tsp1_sys_id!=')
-                + '^nom_assigned_to=' + fTeamMember.sys_id
-                + '^ORtsp1_project_manager=' + fTeamMember.sys_id
-                + '^ORres_user=' + fTeamMember.sys_id
-            );
-            fTeamMember = null; //resetting fTeam member since we already added it
-            filterByParameters(gIonTspResRecord);
-            gIonTspResRecord.query();
-            var rowCount = gIonTspResRecord.getRowCount();
-            //  AND IF the last page of x_snc_ion_nom_to_tsp1 THEN fetch u_ion_widget
-            if (Pagination.current_page * Pagination.items_in_pages > Pagination.total_items) {
-                while (gIonTspResRecord.next()) {
-                    var gRecord = $sp.getFieldsObject(gIonTspResRecord, projectAttributes.join(','));
-                    console.log('fetching');
-                    console.log(gRecord.tsp1_sys_id);
-                    projectSysIds.tsp1.push(gRecord.tsp1_sys_id);
-                    projects.push(castProject(gRecord));
-                }
-                console.log('ProjectSysIds.tsp1 fetching');
-                console.log(projectSysIds.tsp1);
-            }
-            // update the pagination with the new projects from u_ion_widget table
-            Pagination.total_items += rowCount;
-        }
-
-        return projects;
+        return getObjsFromQuery(gr);
     }
 
     function setPagination(gr) {
@@ -192,14 +194,11 @@
     }
 
     function getObjsFromQuery(gr) {
+        gr.query();
         var projects = [];
         while (gr.next()) {
             var grRecord = $sp.getFieldsObject(gr, projectAttributes.join(','));
-            if (fTeamMember && grRecord.tsp1_sys_id.value) {
-                projectSysIds.tsp1.push(grRecord.tsp1_sys_id.value);
-            }
-            var project = castProject(grRecord);
-            projects.push(project);
+            projects.push(castProject(grRecord));
         }
 
         return projects;
@@ -282,12 +281,6 @@
                 fGeoLocation = input.geoLocationSelected;
                 fEngagementType = input.EngagemenTypeSelected;
                 fState = input.StateSelected;
-                console.log('Service Dispatch: exclude projects');
-                console.log(input.excludeProjects);
-                input.excludeProjects.forEach(function (sysId) {
-                    projectSysIds.tsp1.push(sysId);
-                });
-                console.log(input.excludeProjects);
             }
         }
     }
