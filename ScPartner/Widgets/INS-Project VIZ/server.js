@@ -201,6 +201,7 @@
         gr.query();
         var projects = [];
         while (gr.next()) {
+            console.log(toObject(gr));
             var grRecord = $sp.getFieldsObject(gr, projectAttributes.join(','));
             projects.push(castProject(grRecord));
         }
@@ -425,3 +426,17 @@
         gr.addEncodedQuery(query);
     }
 })();
+function toObject(recordToPackage) {
+    var packageToSend = {};
+    for (var property in recordToPackage) {
+        try {
+            packageToSend[property] = {
+                display: recordToPackage[property].getDisplayValue(),
+                value: recordToPackage.getValue(property)
+            };
+        } catch (err) {
+
+        }
+    }
+    return packageToSend;
+}

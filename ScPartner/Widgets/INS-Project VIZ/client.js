@@ -29,7 +29,8 @@ function projectVizClient(spUtil, $scope, $filter) {
         } else if (cl.active && project.table === 'x_snc_ion_nomination' && project.state.value === '4') {
             cl.fa = true;
             cl.warning = true;
-        } else {
+        }
+        else {
             cl.fa = cl.active;
             cl['fa-check'] = cl.active;
         }
@@ -88,7 +89,11 @@ function projectVizClient(spUtil, $scope, $filter) {
             $scope.$apply();
         }
     };
-    c.getProjectAdvancePercentage = function (project) { return parseInt(project.state.value / c.data.states.length * 100); };
-    c.showProgressBar = function () { return window.innerWidth <= 800; };
+    c.getProjectAdvancePercentage = function (project) {
+        return parseInt(project.state.value / c.data.states.length * 100);
+    };
+    c.showProgressBar = function () {
+        return window.innerWidth <= 800;
+    };
     c.windowWidthStatus = c.showProgressBar();
 }
