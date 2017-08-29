@@ -6,8 +6,6 @@
     data.userExists = sysUserGR.get(data.sysUserID);
     data.userSettings = {};
 
-
-
     if(data.userExists){
 
         var sysId = data.sysUserID = $sp.getParameter("sys_id");

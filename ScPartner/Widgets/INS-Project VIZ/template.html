@@ -1,20 +1,25 @@
 <div class="gp_wrapper">
-    <div class="row sorting">
-        <label>Team member:</label>
-        <select ng-model="c.tManagerSelected" ng-change="c.FilterBy()" ng-options="tManager.name for tManager in c.data.InspireProjects track by tManager.sys_id">
-        </select>
-        <label>Geo Location:</label>
-        <select ng-model="c.geoLocationSelected" ng-change="c.FilterBy()" ng-options="geoLocation for geoLocation in c.data.GeoLocations track by geoLocation">
-        </select>
-        <label>Engagement Type:</label>
-        <select ng-model="c.EngagemenTypeSelected" ng-change="c.FilterBy()" ng-options="enga for enga in c.EngagemenTypeValues track by enga">
-        </select>
-        <label>State:</label>
-        <select ng-model="c.StateSelected" ng-change="c.FilterBy()" ng-options="stat for stat in c.StateValues track by stat">
-        </select>
-        <label>Show:</label>
-        <select ng-model="c.onHoldOptionSelected" ng-change="c.FilterBy()" ng-options="holdOption for holdOption in c.onHoldOptions track by holdOption">
-        </select>
+    <div class="row sorting form-group">
+        <div class="col-md-2">
+            <label class="">Team member</label>
+            <div class=""><select class="form-control" ng-model="c.tManagerSelected" ng-change="c.FilterBy()" ng-options="tManager.name for tManager in c.data.InspireProjects track by tManager.sys_id"></select></div>
+        </div>
+        <div class="col-md-2">
+            <label class="">Geo Location</label>
+            <div class=""><select class="form-control" ng-model="c.geoLocationSelected" ng-change="c.FilterBy()" ng-options="geoLocation for geoLocation in c.data.GeoLocations track by geoLocation"></select></div>
+        </div>
+        <div class="col-md-2">
+            <label class="">Engagement Type</label>
+            <div class=""><select class="form-control" ng-model="c.EngagemenTypeSelected" ng-change="c.FilterBy()" ng-options="enga for enga in c.EngagemenTypeValues track by enga"></select></div>
+        </div>
+        <div class="col-md-2">
+            <label class="">State</label>
+            <div class=""><select class="form-control" ng-model="c.StateSelected" ng-change="c.FilterBy()" ng-options="stat for stat in c.StateValues track by stat"></select></div>
+        </div>
+        <div class="col-md-2">
+            <label class="">Show</label>
+            <div class=""><select class="form-control" ng-model="c.onHoldOptionSelected" ng-change="c.FilterBy()" ng-options="holdOption for holdOption in c.onHoldOptions track by holdOption"></select></div>
+        </div>
         <!--<button class="btn" ng-model="c.data.sortDirection" ng-click="(c.data.sortDirection=c.data.sortDirection==='Desc'?'Asc':'Desc') && c.updateData('get')">{{data.sortDirection}}</button>-->
     </div>
     <span class="glyphicons glyphicons-delete"></span>

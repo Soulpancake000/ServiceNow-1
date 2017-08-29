@@ -49,7 +49,6 @@ function UserDelegatesController($scope, spUtil, $filter, spModal) {
     }
 
     function cancelAdd(){
-        c.addMode = false;
         clearForm();
     }
 
@@ -59,7 +58,6 @@ function UserDelegatesController($scope, spUtil, $filter, spModal) {
             spUtil.update($scope);
             clearForm();
         });
-
     }
 
     function editDelegate() {
