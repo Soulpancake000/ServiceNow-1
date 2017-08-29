@@ -120,7 +120,7 @@
     var projectSysIds = {tsp1: [], nom: []};
 
     serviceDispatch();
-    data.projects = fTeamMember && fTeamMember.name !== 'None' ? getIonTsp1ProjectsFilterByTeam() : getIonTsp1Projects();
+    data.projects = fTeamMember && fTeamMember.name !== 'All' ? getIonTsp1ProjectsFilterByTeam() : getIonTsp1Projects();
     data.states = states;
     data.sorting_fields = sortingFields;
     data.order_by = OrderBy;
@@ -157,12 +157,16 @@
             if (grRecord.tsp1_sys_id.value) {
                 projectSysIds.tsp1.push(grRecord.tsp1_sys_id.value);
             }
+            if (grRecord.nom_sys_id.value && !grRecord.tsp1_sys_id.value) {
+                projectSysIds.nom.push(grRecord.nom_sys_id.value);
+            }
             projects.push(castProject(grRecord));
         }
 
 
-        /** fetch projects that haven't been fetched and resource is team member*/
+        /** filter out tsp1 and nom projects that have been fetched and also projects that resource is team member */
         var queryIonTspRes = projectSysIds.tsp1.length ? 'tsp1_sys_id!=' + projectSysIds.tsp1.join('^tsp1_sys_id!=') + '^' : '';
+        queryIonTspRes += projectSysIds.nom.length ? 'nom_sys_id!=' + projectSysIds.nom.join('^nom_sys_id!=') + '^' : '';
         queryIonTspRes += 'nom_assigned_to=' + fTeamMember.sys_id + '^ORtsp1_project_manager=' + fTeamMember.sys_id + '^ORres_user=' + fTeamMember.sys_id;
 
         var gIonTspResRecord = new GlideRecord('u_ion_widget');
@@ -201,7 +205,6 @@
         gr.query();
         var projects = [];
         while (gr.next()) {
-            console.log(toObject(gr));
             var grRecord = $sp.getFieldsObject(gr, projectAttributes.join(','));
             projects.push(castProject(grRecord));
         }
@@ -316,7 +319,7 @@
         rec.orderBy('first_name');
         rec.query();
         var res = [];
-        res.push({sys_id: 'None', name: 'None'});
+        res.push({sys_id: 'All', name: 'All'});
         while (rec.next()) {
             res.push({sys_id: rec.sys_id.toString(), name: rec.first_name.toString() + ' ' + rec.last_name.toString()});
             //res.push(rec);
@@ -338,7 +341,7 @@
         var answer = [];
         var mem = new GlideRecord('sales_territory');
         mem.query();
-        answer.push('None');
+        answer.push('All');
         while (mem.next()) {
             if (!existObjInArray(mem.geo.name, answer) && mem.geo.name != "")
                 answer.push(mem.geo.name.toString());
@@ -362,7 +365,7 @@
         var mem = new GlideRecord('sys_user_grmember');
         mem.addQuery('group.name', 'Inspire');
         mem.query();
-        answer.push('None');
+        answer.push('All');
 
         while (mem.next()) {
             answer.push(mem.user.name.toString());
@@ -377,13 +380,13 @@
         if (fOnHold && fOnHold !== 'All') {
             gr.addQuery('nom_u_on_hold', fOnHold === 'On Hold');
         }
-        if (fTeamMember && fTeamMember.name !== 'None') {
+        if (fTeamMember && fTeamMember.name !== 'All') {
             gr.addEncodedQuery('nom_assigned_to=' + fTeamMember.sys_id + '^ORtsp1_project_manager=' + fTeamMember.sys_id);
         }
-        if (fGeoLocation && fGeoLocation !== 'None') {
+        if (fGeoLocation && fGeoLocation !== 'All') {
             gr.addEncodedQuery(fGeoLocation === 'No Region' ? 'nom_inspire_account.regionISEMPTY' : 'nom_inspire_account.region.geo.name=' + fGeoLocation);
         }
-        if (fEngagementType && fEngagementType !== 'None') {
+        if (fEngagementType && fEngagementType !== 'All') {
             if (fEngagementType && fEngagementType !== 'All') {
                 gr.addEncodedQuery(fEngagementType === 'Empty' ? 'tsp1_u_engagement_typeISEMPTY' : 'tsp1_u_engagement_type=' + fEngagementType);
             }
@@ -426,17 +429,3 @@
         gr.addEncodedQuery(query);
     }
 })();
-function toObject(recordToPackage) {
-    var packageToSend = {};
-    for (var property in recordToPackage) {
-        try {
-            packageToSend[property] = {
-                display: recordToPackage[property].getDisplayValue(),
-                value: recordToPackage.getValue(property)
-            };
-        } catch (err) {
-
-        }
-    }
-    return packageToSend;
-}

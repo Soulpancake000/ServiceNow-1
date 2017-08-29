@@ -10,11 +10,11 @@
         </div>
         <div class="col-md-2">
             <label class="">Engagement Type</label>
-            <div class=""><select class="form-control" ng-model="c.EngagemenTypeSelected" ng-change="c.FilterBy()" ng-options="enga for enga in c.EngagemenTypeValues track by enga"></select></div>
+            <div class=""><select class="form-control" ng-model="c.EngagemenTypeSelected" ng-change="c.FilterBy()" ng-options="enga for enga in c.EngagemenTypeValues track by enga" ng-disabled="c.StateSelected==='In Qualification'"></select></div>
         </div>
         <div class="col-md-2">
             <label class="">State</label>
-            <div class=""><select class="form-control" ng-model="c.StateSelected" ng-change="c.FilterBy()" ng-options="stat for stat in c.StateValues track by stat"></select></div>
+            <div class=""><select class="form-control" ng-model="c.StateSelected" ng-change="c.preStateChanged(); c.FilterBy()" ng-options="stat for stat in c.StateValues track by stat"></select></div>
         </div>
         <div class="col-md-2">
             <label class="">Show</label>

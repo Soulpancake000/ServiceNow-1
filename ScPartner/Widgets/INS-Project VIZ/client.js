@@ -2,14 +2,14 @@ function projectVizClient(spUtil, $scope, $filter) {
     //Controller
     var c = this;
     //Variables
-    c.tManagerSelected = {sys_id: 'None', name: 'None'};
-    c.geoLocationSelected = 'None';
+    c.tManagerSelected = {sys_id: 'All', name: 'All'};
+    c.geoLocationSelected = 'All';
     c.onHoldOptions = ['All', 'On Hold', 'Non Hold'];
     c.onHoldOptionSelected = 'All';
-    c.EngagemenTypeValues = ['None', 'Innovation', 'Journey', 'Simulation', 'Transformation', 'Empty', 'Other'];
-    c.EngagemenTypeSelected = 'None';
-    c.StateValues = ['None', 'In Qualification', 'Pending Launch', 'Active', 'Completed'];
-    c.StateSelected = 'None';
+    c.EngagemenTypeValues = ['All', 'Innovation', 'Journey', 'Simulation', 'Transformation', 'Empty', 'Other'];
+    c.EngagemenTypeSelected = 'All';
+    c.StateValues = ['All', 'In Qualification', 'Pending Launch', 'Active', 'Completed'];
+    c.StateSelected = 'All';
     //Functions
     //Progress Bar - Functions
     c.progressBarState = function (row) {
@@ -94,6 +94,10 @@ function projectVizClient(spUtil, $scope, $filter) {
     };
     c.showProgressBar = function () {
         return window.innerWidth <= 800;
+    };
+    c.preStateChanged = function () {
+        if (c.StateSelected === 'In Qualification')
+            c.EngagemenTypeSelected = 'All'
     };
     c.windowWidthStatus = c.showProgressBar();
 }
